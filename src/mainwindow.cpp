@@ -27,6 +27,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    this->setFixedSize(this->size());
+
     //CREATING ACTIONS FIRST!!! THEN CREATING MENUS...
     createActions();
     createMenus();
@@ -235,6 +238,8 @@ void MainWindow::onWorldInitialized() {
     // Show a window since it is hidden
     CWorld* senderW = qobject_cast<CWorld*>(sender());
     this->show();
+
+    this->ui->Particles->resizeGL(ui->Particles->width(), ui->Particles->height());
 
     this->ui->Particles->initializeWorld(senderW);
     connect(senderW, SIGNAL(RedrawWorld(SGeometry)), this->ui->Particles, SLOT(OnRenderScene(SGeometry)));

@@ -10,6 +10,12 @@
     <height>513</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>ParticlesInBox</string>
   </property>
@@ -25,8 +31,8 @@
     </property>
     <property name="minimumSize">
      <size>
-      <width>491</width>
-      <height>441</height>
+      <width>0</width>
+      <height>0</height>
      </size>
     </property>
     <property name="maximumSize">
@@ -53,7 +59,7 @@
      <x>0</x>
      <y>0</y>
      <width>763</width>
-     <height>19</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>
