@@ -230,7 +230,7 @@
      <number>5</number>
     </property>
    </widget>
-   <widget class="QLabel" name="label_5">
+   <widget class="QLabel" name="labelYMax">
     <property name="geometry">
      <rect>
       <x>60</x>
@@ -243,7 +243,7 @@
      <string>Y max:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
+   <widget class="QLabel" name="labelYMin">
     <property name="geometry">
      <rect>
       <x>60</x>
@@ -256,7 +256,7 @@
      <string>Y min:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_7">
+   <widget class="QLabel" name="labelXMax">
     <property name="geometry">
      <rect>
       <x>130</x>
@@ -269,7 +269,7 @@
      <string>X max:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_8">
+   <widget class="QLabel" name="labelXMin">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -295,7 +295,7 @@
    <property name="title">
     <string>Miscellaneous</string>
    </property>
-   <widget class="QLabel" name="label_9">
+   <widget class="QLabel" name="labelG">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -350,7 +350,7 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QLabel" name="label_10">
+   <widget class="QLabel" name="labelOutputFile">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -392,7 +392,7 @@
      <number>5</number>
     </property>
    </widget>
-   <widget class="QLabel" name="label_16">
+   <widget class="QLabel" name="labelMembranaX">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -408,7 +408,7 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_17">
+   <widget class="QLabel" name="labelMembranaThickness">
     <property name="geometry">
      <rect>
       <x>130</x>
@@ -440,7 +440,7 @@
      <number>5</number>
     </property>
    </widget>
-   <widget class="QLabel" name="label_18">
+   <widget class="QLabel" name="labelMembranaHolePos">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -472,7 +472,7 @@
      <number>5</number>
     </property>
    </widget>
-   <widget class="QLabel" name="label_19">
+   <widget class="QLabel" name="labelMembranaHoleSize">
     <property name="geometry">
      <rect>
       <x>120</x>
@@ -533,7 +533,7 @@
      <number>5</number>
     </property>
    </widget>
-   <widget class="QLabel" name="label_11">
+   <widget class="QLabel" name="labelDissipationRatio">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -549,7 +549,7 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_12">
+   <widget class="QLabel" name="labelBounceSpeedTop">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -581,7 +581,7 @@
      <number>5</number>
     </property>
    </widget>
-   <widget class="QLabel" name="label_13">
+   <widget class="QLabel" name="labelBounceSpeedBottom">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -613,7 +613,7 @@
      <number>5</number>
     </property>
    </widget>
-   <widget class="QLabel" name="label_14">
+   <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -645,7 +645,7 @@
      <number>5</number>
     </property>
    </widget>
-   <widget class="QLabel" name="label_15">
+   <widget class="QLabel" name="labelDissipationRatioInfo">
     <property name="geometry">
      <rect>
       <x>10</x>
