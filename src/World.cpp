@@ -59,18 +59,24 @@ CWorld::CWorld()
     connect(this->Thread, &CalcThread::finished, Thread, &QObject::deleteLater); // На случай если поток завершился до завершения программы
 }
 
+
 CWorld::~CWorld()
 {
 }
 
 
-// генерирует псевдослучайное число в диапазоне from...to
+/**
+ * генерирует псевдослучайное число в диапазоне from...to
+ */
 double CWorld::random(double from, double to)
 {
 	return (to-from)*rand()/RAND_MAX + from;
 }
 
-// Вычисляет квадрат расстояния между двумя частицами (между центрами)
+
+/**
+ * Вычисляет квадрат расстояния между двумя частицами (между центрами)
+ */
 double CWorld::Distance2(SParticle &p1, SParticle &p2)
 {
 	double dx = p1.x - p2.x;
@@ -78,7 +84,10 @@ double CWorld::Distance2(SParticle &p1, SParticle &p2)
 	return (dx*dx+dy*dy);
 }
 
-// Определяет, сближаются ли частицы
+
+/**
+ * Определяет, сближаются ли частицы
+ */
 bool CWorld::Approaching(SParticle &p1, SParticle &p2)
 {
 	double dVx, dVy;	// Скорости сближения по осям
@@ -101,7 +110,10 @@ bool CWorld::Approaching(SParticle &p1, SParticle &p2)
 	return (dVy > dVx);
 }
 
-// Рассчитывает столкновение частиц
+
+/**
+ * Рассчитывает столкновение частиц
+ */
 void CWorld::Collision(SParticle &p1, SParticle &p2)
 {
 	double factor = sqrt(1.-loss);
@@ -164,7 +176,10 @@ void CWorld::Collision(SParticle &p1, SParticle &p2)
 	p2.vy = vynew;*/
 }
 
-// Задает случайный вектор скорости (модуль постоянный и равный Vinit)
+
+/**
+ * Задает случайный вектор скорости (модуль постоянный и равный Vinit)
+ */
 void CWorld::RandomVelocity(SParticle &p)
 {
 	double angle = random(0, PI*2);			// направление движения частицы - случайный угол 0...2PI
@@ -172,9 +187,12 @@ void CWorld::RandomVelocity(SParticle &p)
 	p.vy = Vinit * sin(angle);
 }
 
-// Вычисляет временнОй шаг исходя из скоростей частиц с таким расчетом, чтобы даже самая быстрая частица
-// за этот шаг не проходила расстояние, большее половины своего радиуса (это нужно чтобы избежать
-// пролета частиц сквозь границу ящика за один шаг, а также чтобы столкновения частиц между собой не были пропущены).
+
+/**
+  * Вычисляет временнОй шаг исходя из скоростей частиц с таким расчетом, чтобы даже самая быстрая частица
+  * за этот шаг не проходила расстояние, большее половины своего радиуса (это нужно чтобы избежать
+  * пролета частиц сквозь границу ящика за один шаг, а также чтобы столкновения частиц между собой не были пропущены).
+ */
 double CWorld::CalcTimeStep()
 {
 	double V, Vmax = 0;
@@ -192,7 +210,10 @@ double CWorld::CalcTimeStep()
     return DeltaTime;
 }
 
-// Рассчитывает статистику
+
+/**
+ * Рассчитывает статистику
+ */
 void CWorld::RecalcStat()
 {
 	int i;
@@ -223,7 +244,10 @@ void CWorld::RecalcStat()
 		VaverageL = 0;
 }
 
-//  Первоначальное распределение частиц
+
+/**
+ *  Первоначальное распределение частиц
+ */
 bool CWorld::InitialDistribution(WorldSettings* dlg)
 {
 
@@ -348,13 +372,14 @@ bool CWorld::InitialDistribution(WorldSettings* dlg)
 		fprintf(fd, "\nTime\tnLeft\t<V>left\t<flux>left\t\tnRight\t<V>right\t<flux>right\n");
 		fclose(fd);
     }
-
-    // TODO: set up renderer
-
     emit onWorldInitialized();
     return true;
 }
 
+
+/**
+ * Вызывается после каждого временного интервала
+ */
 void CWorld::OnIdle()
 {
 	// Записываем всю статистику в файл
@@ -393,7 +418,9 @@ void CWorld::MoveParticle(SParticle &p, double dt)
 	p.vy = p.vy - g*dt;
 }
 
-// Записывает накопленную статистику в файл
+/**
+ * Записывает накопленную статистику в файл
+ */
 void CWorld::WriteStat()
 {
     FILE *fd = fopen(FileName.toStdString().c_str(), "a");
@@ -417,7 +444,9 @@ void CWorld::WriteStat()
 	}
 }
 
-// Метод сортировки частиц по Х
+/**
+ * Метод сортировки частиц по Х
+ */
 static int CompareParticleProc(const void *elem1, const void *elem2)
 {
 	SParticle *p1 = (SParticle *)elem1;
@@ -428,10 +457,13 @@ static int CompareParticleProc(const void *elem1, const void *elem2)
 		return 1;
 }
 
-// Выполняет моделирование одного временнОго шага
-// Возвращает true если в результате этого шага случилось хотя бы одно столкновение частицы
-// с другой частицей или со стенками (в результате чего изменилась скорость хоть одной частицы)
-// или хоть одна частица перелетела из одной половины в другую
+
+/**
+ * Выполняет моделирование одного временнОго шага
+ * Возвращает true если в результате этого шага случилось хотя бы одно столкновение частицы
+ * с другой частицей или со стенками (в результате чего изменилась скорость хоть одной частицы)
+ * или хоть одна частица перелетела из одной половины в другую
+ */
 bool CWorld::OneTimeStep()
 {
     int i, j;
@@ -467,6 +499,10 @@ bool CWorld::OneTimeStep()
     return true;
 }
 
+/**
+ * Корректирует движение частицы при столкновении с перегородкой и стенками
+ * Возвращает true если частица столкнулась с перегородкой/стенками
+ */
 bool CWorld::CorrectParticleByGeometry(SParticle &p)
 {
     bool bCorrected = false;
@@ -544,12 +580,20 @@ bool CWorld::CorrectParticleByGeometry(SParticle &p)
 	return bCorrected;
 }
 
+
+/**
+ * Вызывается перед созданием мира. Отправитель (WorldSettings) передает параметры мира
+ */
 void CWorld::onWorldInitializationRequested() {
     this->InitialDistribution(qobject_cast<WorldSettings*>(this->sender()));
     this->Thread->start();
     return;
 }
 
+
+/**
+ * Выход из потока перед прекращением работы
+ */
 void CWorld::onApplicationTerminate() {
     // Выходим из потока:
     this->Thread->requestInterruption();
