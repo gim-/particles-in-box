@@ -385,7 +385,7 @@ void CWorld::OnIdle()
 	// Записываем всю статистику в файл
     if ((nTimeSteps % 1000) == 0) {
         WriteStat();
-
+        emit onParticleSCountChange();
     }
 
     bool bChanged = OneTimeStep();
@@ -397,6 +397,7 @@ void CWorld::OnIdle()
     if ((nTimeSteps % 30) == 0)
 	{
         emit RedrawWorld(this->Geometry);
+
 	}
 }
 

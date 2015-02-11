@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
     createMenus();
     //------------------
+    createStatusBar();
 }
 
 MainWindow::~MainWindow()
@@ -57,6 +58,8 @@ MainWindow::~MainWindow()
     delete toolBar;
     delete statusBr;
     delete about;
+
+    deleteStatusBar();
     //delete scene;
 }
 
@@ -234,16 +237,55 @@ void MainWindow::createMenus()
     //------------
 }
 
+void MainWindow::createStatusBar()
+{
+    statusTime = new QLabel(this);
+    statusTime->setAlignment(Qt::AlignRight);
+    statusTime->setIndent(3);
+    statusTime->setMargin(8);
+
+    statusLeft = new QLabel(this);
+    statusLeft->setAlignment(Qt::AlignRight);
+    statusLeft->setIndent(3);
+    statusLeft->setMargin(8);
+
+    statusRight = new QLabel(this);
+    statusRight->setAlignment(Qt::AlignRight);
+    statusRight->setIndent(3);
+    statusRight->setMargin(8);
+
+    statusBar()->addWidget(statusTime, 1);
+    statusBar()->addWidget(statusLeft, 1);
+    statusBar()->addWidget(statusRight, 1);
+
+    statusBar()->showMessage("Ready");
+}
+
+void MainWindow::deleteStatusBar()
+{
+    if (statusTime)
+        delete statusTime;
+    if (statusLeft)
+        delete statusLeft;
+    if (statusRight)
+        delete statusRight;
+}
+
 void MainWindow::onWorldInitialized() {
+
+    //TODO: find the way to avoid this
+    ui->Particles->setGeometry(0, 10, ui->Particles->width(), ui->Particles->height());
+
     // Show a window since it is hidden
-    CWorld* senderW = qobject_cast<CWorld*>(sender());
+    //CWorld* senderW = qobject_cast<CWorld*>(sender());
+    senderW = qobject_cast<CWorld*>(sender());
     this->show();
 
     this->ui->Particles->resizeGL(ui->Particles->width(), ui->Particles->height());
 
     this->ui->Particles->initializeWorld(senderW);
     connect(senderW, SIGNAL(RedrawWorld(SGeometry)), this->ui->Particles, SLOT(OnRenderScene(SGeometry)));
-
+    connect(senderW, SIGNAL(onParticleSCountChange()), this, SLOT(updateStatusBar()));
 
     // set up plot 1
     const short int s = 135;
@@ -260,4 +302,17 @@ void MainWindow::onWorldInitialized() {
     ui->Plot1->yAxis->setRange(QCPRange(0, s));
     ui->Plot1->replot();
     return;
+}
+
+void MainWindow::updateStatusBar()
+{
+    if (senderW)
+    {
+        float nLeftPercent = senderW->nLeft*100.0f/senderW->GetParticleCount();
+        float nRightPercent = senderW->nRight*100.0f/senderW->GetParticleCount();
+        statusLeft->setText("Left: "+QString::number(senderW->nLeft)+" ("+QString::number(nLeftPercent)+"%) <V> = "+QString::number(senderW->VaverageL));
+        statusRight->setText("Right: "+QString::number(senderW->nRight)+"("+QString::number(nRightPercent)+"%) <V> = "+QString::number(senderW->VaverageR));
+        statusTime->setText("Time="+QString::number(senderW->Time)+" Step="+QString::number(senderW->DeltaTime));
+    }
+
 }

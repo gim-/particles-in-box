@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 #include "World.h"
 #include <QMainWindow>
 #include <QFileDialog>
+#include <QLabel>
 #include "aboutwindow.h"
 
 namespace Ui {
@@ -48,39 +49,48 @@ private slots:
     void onNewClick();
 public slots:
     void onWorldInitialized();
+private slots:
+    void updateStatusBar();
 
 protected:
     void resizeEvent(QResizeEvent * event);
 private:
     void createActions();
     void createMenus();
+    void createStatusBar();
+    void deleteStatusBar();
 
     Ui::MainWindow *ui;
+
     //actions for menuBar
-    QMenu *fileMenu;
-    QMenu *editMenu;
-    QMenu *viewMenu;
-    QMenu *helpMenu;
-    QAction *New;
-    QAction *open;
-    QAction *save;
-    QAction *saveAs;
-    QAction *print;
-    QAction *printPrev;
-    QAction *printSetup;
-    QAction *recFile;
-    QAction *exit;
+    QMenu *fileMenu = nullptr;
+    QMenu *editMenu = nullptr;
+    QMenu *viewMenu = nullptr;
+    QMenu *helpMenu = nullptr;
+    QAction *New = nullptr;
+    QAction *open = nullptr;
+    QAction *save = nullptr;
+    QAction *saveAs = nullptr;
+    QAction *print = nullptr;
+    QAction *printPrev = nullptr;
+    QAction *printSetup = nullptr;
+    QAction *recFile = nullptr;
+    QAction *exit = nullptr;
 
-    QAction *undo;
-    QAction *cut;
-    QAction *copy;
-    QAction *paste;
+    QAction *undo = nullptr;
+    QAction *cut = nullptr;
+    QAction *copy = nullptr;
+    QAction *paste = nullptr;
 
-    QAction *toolBar;
-    QAction *statusBr;
+    QAction *toolBar = nullptr;
+    QAction *statusBr = nullptr;
 
-    QAction *about;
+    QAction *about = nullptr;
 
+    QLabel *statusTime = nullptr;
+    QLabel *statusLeft = nullptr;
+    QLabel *statusRight = nullptr;
+    CWorld* senderW = nullptr;
 };
 
 #endif // MAINWINDOW_H

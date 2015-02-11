@@ -6,6 +6,7 @@
 
 QT       += core gui
 QT       += opengl
+CONFIG += C++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 

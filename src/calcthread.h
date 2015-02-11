@@ -28,7 +28,7 @@ class CalcThread : public QThread
 {
     Q_OBJECT
     CWorld *Parent;
-    void run() Q_DECL_OVERRIDE; // Перезаписываем функцию. Вызывается после start()
+    virtual void run() Q_DECL_OVERRIDE; // Перезаписываем функцию. Вызывается после start()
 public:
     explicit CalcThread(CWorld *parent = 0);
 

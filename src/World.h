@@ -178,7 +178,7 @@ public slots:
 signals:
     void onWorldInitialized();
     void RedrawWorld(SGeometry);
-
+    void onParticleSCountChange();
 };
 
 

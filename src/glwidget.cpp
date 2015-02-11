@@ -49,9 +49,7 @@ void GLWidget::initializeGL()
 void GLWidget::resizeGL(int width, int height)
 {
    height = height?height:1;
-
     glViewport( 0, 0, (GLint)width, (GLint)height );
-
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     //аgluPerspective(45.0f,(GLfloat)width/(GLfloat)height, 0.1f, 100.0f);
@@ -70,7 +68,6 @@ void GLWidget::clearGL() {
 
 void GLWidget::paintGL()
 {
-
 
     this->clearGL();
     glLoadIdentity();
@@ -121,8 +118,6 @@ void GLWidget::paintGL()
         glVertex2d(pGeometry->WRight, pGeometry->YGapBottom);
         glVertex2d(pGeometry->WRight, pGeometry->Ymin);
     glEnd();
-
-
 }
 
 void GLWidget::timeOut()
