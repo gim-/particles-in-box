@@ -312,6 +312,10 @@ void MainWindow::onWorldInitialized() {
     connect(senderW, SIGNAL(onParticleSCountChange()), this, SLOT(updateStatusBar()));
     connect(senderW, SIGNAL(RedrawHeightGraph(QVector<int>)), this, SLOT(updateHeightGraph(QVector<int>)));
 
+    QSize partSize = ui->Particles->size();
+    ui->Particles->resize(partSize.width() - 50, partSize.height() - 50);
+    ui->Particles->resize(partSize.width(), partSize.height());
+
     return;
 }
 
