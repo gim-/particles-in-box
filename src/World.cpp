@@ -387,7 +387,7 @@ void CWorld::OnIdle()
     if ((nTimeSteps % 1000) == 0) {
         WriteStat();
         emit onParticleSCountChange();
-        emit RedrawHeightGraph(Heights, CalculateHeightDistribution());
+        emit RedrawHeightGraph(CalculateHeightDistribution());
     }
 
     bool bChanged = OneTimeStep();
@@ -607,14 +607,15 @@ void CWorld::onApplicationTerminate() {
 /**
  * Рассчитывает распределение частиц по высотам.
  * Промежуток Ymin..Ymax разбивается поровну на Heights промежутков
- * Функция возвращает массив с количеством частиц в каждом промежутке
- * Принимающая сторона должна убедиться, что массив удалён
+ * Функция возвращает вектор с количеством частиц в каждом промежутке
  */
-int* CWorld::CalculateHeightDistribution() {
-    int* result = new int[Heights]();
+QVector<int> CWorld::CalculateHeightDistribution() {
+    QVector<int> result(Heights, 0);
     double dy = (Geometry.ParticleYmax - Geometry.ParticleYmin) / Heights;
     for (int i = 0, height; i < GetParticleCount(); i++) {
         height = (particle[i].y - Geometry.ParticleYmin) / dy;
+        if (height >= Heights) height = Heights - 1; // workaround for the formula
+        else if (height < 0) height = 0;
         result[height] ++;
     }
     return result;

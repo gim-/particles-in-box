@@ -35,6 +35,13 @@ MainWindow::MainWindow(QWidget *parent) :
     createMenus();
     //------------------
     createStatusBar();
+    //------------------
+    heightBars = new QCPBars(ui->heightsGraph->xAxis, ui->heightsGraph->yAxis);
+    ui->heightsGraph->addPlottable(heightBars);
+    heightBars->setName("Height distribution");
+    ui->heightsGraph->xAxis->setLabel("Heights");
+    ui->heightsGraph->yAxis->setLabel("Particles");
+    ui->heightsGraph->yAxis->setRange(0.0, 300.0);
 }
 
 MainWindow::~MainWindow()
@@ -58,6 +65,8 @@ MainWindow::~MainWindow()
     delete toolBar;
     delete statusBr;
     delete about;
+
+    delete heightBars;
 
     deleteStatusBar();
     //delete scene;
@@ -272,12 +281,18 @@ void MainWindow::deleteStatusBar()
 }
 
 
-void MainWindow::updateHeightGraph(int count, int* values) {
-    qDebug() << "UpdateHeightGraph called";
-    for (int i = 0; i < count; i++) {
-        qDebug() << i << values[i];
+void MainWindow::updateHeightGraph(QVector<int> data)
+{
+    QVector<double> heights;
+    QVector<double> counts;
+    for (int i : data) {
+        heights << heights.size() + 1;
+        counts << i;
     }
-    delete[] values;
+
+    ui->heightsGraph->xAxis->setRange(1, (double)data.size());
+    heightBars->setData(heights, counts);
+    ui->heightsGraph->replot();
 }
 
 void MainWindow::onWorldInitialized() {
@@ -295,22 +310,8 @@ void MainWindow::onWorldInitialized() {
     this->ui->Particles->initializeWorld(senderW);
     connect(senderW, SIGNAL(RedrawWorld(SGeometry)), this->ui->Particles, SLOT(OnRenderScene(SGeometry)));
     connect(senderW, SIGNAL(onParticleSCountChange()), this, SLOT(updateStatusBar()));
-    connect(senderW, SIGNAL(RedrawHeightGraph(int,int*)), this, SLOT(updateHeightGraph(int,int*)));
+    connect(senderW, SIGNAL(RedrawHeightGraph(QVector<int>)), this, SLOT(updateHeightGraph(QVector<int>)));
 
-    // set up plot 1
-    const short int s = 135;
-    QVector<double>nLeft(s), time(s);
-    for (double i=0.0; i<s; i++) {
-        nLeft[i] = i;
-        time[i] = i;
-    }
-    ui->Plot1->addGraph();
-    ui->Plot1->graph()->setData(time, nLeft);
-    ui->Plot1->xAxis->setLabel("t, s");
-    ui->Plot1->xAxis->setRange(QCPRange(0, s));
-    ui->Plot1->yAxis->setLabel("N");
-    ui->Plot1->yAxis->setRange(QCPRange(0, s));
-    ui->Plot1->replot();
     return;
 }
 

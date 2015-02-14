@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     qRegisterMetaType<SGeometry>("SGeometry");
+    qRegisterMetaType<QVector<int> >("QVector<int>");
 
     MainWindow w;
 

@@ -135,7 +135,7 @@ protected:
     bool CorrectParticleByGeometry(SParticle &p);
     bool OneTimeStep();
 
-    int* CalculateHeightDistribution();
+    QVector<int> CalculateHeightDistribution();
 
 
 // Private methods
@@ -184,7 +184,7 @@ signals:
     void onWorldInitialized();
     void RedrawWorld(SGeometry);
     void onParticleSCountChange();
-    void RedrawHeightGraph(int, int*);
+    void RedrawHeightGraph(QVector<int>);
 };
 
 

@@ -26,6 +26,7 @@ THE SOFTWARE.*/
 #include <QFileDialog>
 #include <QLabel>
 #include "aboutwindow.h"
+#include "qcustomplot.h"
 
 namespace Ui {
 class MainWindow;
@@ -52,7 +53,7 @@ public slots:
     void onWorldInitialized();
 private slots:
     void updateStatusBar();
-    void updateHeightGraph(int, int*);
+    void updateHeightGraph(QVector<int>);
 
 protected:
     void resizeEvent(QResizeEvent * event);
@@ -93,6 +94,8 @@ private:
     QLabel *statusLeft = nullptr;
     QLabel *statusRight = nullptr;
     CWorld* senderW = nullptr;
+
+    QCPBars* heightBars = nullptr;
 };
 
 #endif // MAINWINDOW_H

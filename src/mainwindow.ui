@@ -42,7 +42,7 @@
      </size>
     </property>
    </widget>
-   <widget class="QCustomPlot" name="Plot1" native="true">
+   <widget class="QCustomPlot" name="heightsGraph" native="true">
     <property name="geometry">
      <rect>
       <x>560</x>
