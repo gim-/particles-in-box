@@ -31,6 +31,7 @@ namespace Ui {
 class MainWindow;
 }
 
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -51,6 +52,7 @@ public slots:
     void onWorldInitialized();
 private slots:
     void updateStatusBar();
+    void updateHeightGraph(int, int*);
 
 protected:
     void resizeEvent(QResizeEvent * event);

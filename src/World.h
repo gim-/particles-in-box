@@ -35,8 +35,8 @@ Revision history:
 #define __WORLD_H_INCLUDED__
 
 #include <QObject>
-#include <math.h>
 #include <QString>
+#include <math.h>
 #include "calcthread.h"
 
 // Forward declarations
@@ -135,6 +135,8 @@ protected:
     bool CorrectParticleByGeometry(SParticle &p);
     bool OneTimeStep();
 
+    int* CalculateHeightDistribution();
+
 
 // Private methods
 private:
@@ -152,6 +154,8 @@ protected:
 	double loss;			// Коэффициент диссипации кинетической энергии
 
 	double g;				// Ускорение свободного падения (в м/с**2)
+
+    int Heights;            // Количество разбиений по Oy
 
     QString FileName;		// Имя файла с записанной статистикой
 
@@ -175,10 +179,12 @@ private:
 public slots:
     void onWorldInitializationRequested(); // Called by dialog
     void onApplicationTerminate();
+
 signals:
     void onWorldInitialized();
     void RedrawWorld(SGeometry);
     void onParticleSCountChange();
+    void RedrawHeightGraph(int, int*);
 };
 
 

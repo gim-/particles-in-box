@@ -271,6 +271,15 @@ void MainWindow::deleteStatusBar()
         delete statusRight;
 }
 
+
+void MainWindow::updateHeightGraph(int count, int* values) {
+    qDebug() << "UpdateHeightGraph called";
+    for (int i = 0; i < count; i++) {
+        qDebug() << i << values[i];
+    }
+    delete[] values;
+}
+
 void MainWindow::onWorldInitialized() {
 
     //TODO: find the way to avoid this
@@ -286,6 +295,7 @@ void MainWindow::onWorldInitialized() {
     this->ui->Particles->initializeWorld(senderW);
     connect(senderW, SIGNAL(RedrawWorld(SGeometry)), this->ui->Particles, SLOT(OnRenderScene(SGeometry)));
     connect(senderW, SIGNAL(onParticleSCountChange()), this, SLOT(updateStatusBar()));
+    connect(senderW, SIGNAL(RedrawHeightGraph(int,int*)), this, SLOT(updateHeightGraph(int,int*)));
 
     // set up plot 1
     const short int s = 135;

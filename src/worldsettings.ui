@@ -311,7 +311,7 @@
    <widget class="QLineEdit" name="m_G">
     <property name="geometry">
      <rect>
-      <x>80</x>
+      <x>90</x>
       <y>30</y>
       <width>31</width>
       <height>22</height>
@@ -361,6 +361,32 @@
     </property>
     <property name="text">
      <string>Output file:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="m_Heights">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>30</y>
+      <width>41</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>10</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelHeights">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>30</y>
+      <width>61</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string># Heights</string>
     </property>
    </widget>
   </widget>

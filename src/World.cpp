@@ -262,6 +262,7 @@ bool CWorld::InitialDistribution(WorldSettings* dlg)
     nRightParticles = dlg->getSetting("m_nRightParticles").toInt();
     m_RightColor.rgb = 0x0000FF; // TODO: dlg->getSetting("m_RightColor").toInt();
 
+    Heights = dlg->getSetting("m_Heights").toInt();
     g = dlg->getSetting("m_G").toDouble();
     loss = dlg->getSetting("m_LossRatio").toDouble();
     Geometry.Rparticle = dlg->getSetting("m_RParticle").toDouble();
@@ -386,6 +387,7 @@ void CWorld::OnIdle()
     if ((nTimeSteps % 1000) == 0) {
         WriteStat();
         emit onParticleSCountChange();
+        emit RedrawHeightGraph(Heights, CalculateHeightDistribution());
     }
 
     bool bChanged = OneTimeStep();
@@ -599,4 +601,21 @@ void CWorld::onApplicationTerminate() {
     // Выходим из потока:
     this->Thread->requestInterruption();
     this->Thread->wait();
+}
+
+
+/**
+ * Рассчитывает распределение частиц по высотам.
+ * Промежуток Ymin..Ymax разбивается поровну на Heights промежутков
+ * Функция возвращает массив с количеством частиц в каждом промежутке
+ * Принимающая сторона должна убедиться, что массив удалён
+ */
+int* CWorld::CalculateHeightDistribution() {
+    int* result = new int[Heights]();
+    double dy = (Geometry.ParticleYmax - Geometry.ParticleYmin) / Heights;
+    for (int i = 0, height; i < GetParticleCount(); i++) {
+        height = (particle[i].y - Geometry.ParticleYmin) / dy;
+        result[height] ++;
+    }
+    return result;
 }
