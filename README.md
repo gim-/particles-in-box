@@ -7,4 +7,4 @@ Particles in box
 ================
 Зависимости:
 
-[QCustomPlot][http://www.qcustomplot.com/]
+[QCustomPlot](http://www.qcustomplot.com/)
