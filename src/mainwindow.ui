@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>763</width>
-    <height>513</height>
+    <height>543</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -25,8 +25,8 @@
      <rect>
       <x>0</x>
       <y>10</y>
-      <width>551</width>
-      <height>441</height>
+      <width>763</width>
+      <height>465</height>
      </rect>
     </property>
     <property name="minimumSize">
@@ -37,19 +37,9 @@
     </property>
     <property name="maximumSize">
      <size>
-      <width>551</width>
-      <height>441</height>
+      <width>5000</width>
+      <height>5000</height>
      </size>
-    </property>
-   </widget>
-   <widget class="QCustomPlot" name="heightsGraph" native="true">
-    <property name="geometry">
-     <rect>
-      <x>560</x>
-      <y>10</y>
-      <width>191</width>
-      <height>161</height>
-     </rect>
     </property>
    </widget>
   </widget>
@@ -79,12 +69,6 @@
    <class>GLWidget</class>
    <extends>QWidget</extends>
    <header>glwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QCustomPlot</class>
-   <extends>QWidget</extends>
-   <header>qcustomplot.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

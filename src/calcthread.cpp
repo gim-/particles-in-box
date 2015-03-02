@@ -27,9 +27,9 @@ CalcThread::CalcThread(CWorld *parent) :
 }
 
 void CalcThread::run()  { //Q_DECL_OVERRIDE  error: virt-specifiers in 'run' not allowed outside a class definition
-    while(!this->isInterruptionRequested()) {
-        this->Parent->OnIdle();
-        this->usleep(this->Parent->CalcTimeStep());
+    while(!isInterruptionRequested()) {
+        Parent->OnIdle();
+        usleep(Parent->CalcTimeStep());
     }
     return;
 }

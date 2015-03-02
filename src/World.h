@@ -38,6 +38,7 @@ Revision history:
 #include <QString>
 #include <math.h>
 #include "calcthread.h"
+#include <QVector>
 
 // Forward declarations
 
@@ -101,6 +102,9 @@ public:
 	SGeometry *GetGeometry() { return &Geometry; }
 	unsigned char *getLeftColor() { return m_LeftColor.c; }
     unsigned char *getRightColor() { return m_RightColor.c; }
+    void setHeightDistActive(bool isActive) {heightDistActive = isActive;}
+    void setMaxwellDistActive(bool isActive) {maxwellDistActive = isActive;}
+
 
 // Public members
 public:
@@ -135,8 +139,10 @@ protected:
     bool CorrectParticleByGeometry(SParticle &p);
     bool OneTimeStep();
 
-    QVector<int> CalculateHeightDistribution();
-
+    const QVector<double> *CalculateHeightDistribution();
+    const QVector<double> *CalculateMaxwellDistDistribution();
+    bool HeightDistIsActive() {return heightDistActive;}
+    bool MaxwellDistIsActive() {return maxwellDistActive;}
 
 // Private methods
 private:
@@ -158,6 +164,7 @@ protected:
     int Heights;            // Количество разбиений по Oy
 
     QString FileName;		// Имя файла с записанной статистикой
+    QVector<double> heightDistrArr;
 
 	// Вычисляемые величины (переменные)
 	unsigned long	nTimeSteps;			// Количество пройденных шагов по времени
@@ -170,6 +177,9 @@ protected:
 		unsigned char c[4];
         unsigned int rgb;
     } m_LeftColor, m_RightColor;
+
+    bool heightDistActive = false;
+    bool maxwellDistActive = false;
 
 // Private members
 private:
@@ -184,7 +194,8 @@ signals:
     void onWorldInitialized();
     void RedrawWorld(SGeometry);
     void onParticleSCountChange();
-    void RedrawHeightGraph(QVector<int>);
+    void RedrawHeightGraph(const QVector<double>*);
+    void RedrawMaxwellDistGraph(const QVector<double>*);
 };
 
 

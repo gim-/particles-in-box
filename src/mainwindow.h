@@ -26,6 +26,7 @@ THE SOFTWARE.*/
 #include <QFileDialog>
 #include <QLabel>
 #include "aboutwindow.h"
+#include "graphwindow.h"
 #include "qcustomplot.h"
 
 namespace Ui {
@@ -49,11 +50,15 @@ private slots:
     void onSaveClick();
     void onSaveAsClick();
     void onNewClick();
+    void onHeightDistClick();
+    void onHeightDistClose();
+    void onMaxwellDistClick();
+    void onMaxwellDistClose();
 public slots:
     void onWorldInitialized();
 private slots:
     void updateStatusBar();
-    void updateHeightGraph(QVector<int>);
+    //void updateHeightGraph(const QVector<double> *) const;
 
 protected:
     void resizeEvent(QResizeEvent * event);
@@ -70,6 +75,7 @@ private:
     QMenu *editMenu = nullptr;
     QMenu *viewMenu = nullptr;
     QMenu *helpMenu = nullptr;
+    QMenu *charts = nullptr;
     QAction *New = nullptr;
     QAction *open = nullptr;
     QAction *save = nullptr;
@@ -85,6 +91,9 @@ private:
     QAction *copy = nullptr;
     QAction *paste = nullptr;
 
+    QAction *heightDist = nullptr;
+    QAction *MaxwellDist = nullptr;
+
     QAction *toolBar = nullptr;
     QAction *statusBr = nullptr;
 
@@ -93,6 +102,7 @@ private:
     QLabel *statusTime = nullptr;
     QLabel *statusLeft = nullptr;
     QLabel *statusRight = nullptr;
+    QVector<GraphWindow*> graphWindows;
     CWorld* senderW = nullptr;
 
     QCPBars* heightBars = nullptr;

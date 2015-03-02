@@ -21,6 +21,7 @@ THE SOFTWARE.*/
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "World.h"
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -28,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->setFixedSize(this->size());
+    //this->setFixedSize(this->size());
 
     //CREATING ACTIONS FIRST!!! THEN CREATING MENUS...
     createActions();
@@ -36,12 +37,9 @@ MainWindow::MainWindow(QWidget *parent) :
     //------------------
     createStatusBar();
     //------------------
-    heightBars = new QCPBars(ui->heightsGraph->xAxis, ui->heightsGraph->yAxis);
-    ui->heightsGraph->addPlottable(heightBars);
-    heightBars->setName("Height distribution");
-    ui->heightsGraph->xAxis->setLabel("Heights");
-    ui->heightsGraph->yAxis->setLabel("Particles");
-    ui->heightsGraph->yAxis->setRange(0.0, 300.0);
+    //Setting amount of graphWindows
+    graphWindows.fill(nullptr, 2); //два окна с графоном... пока
+    //------------------
 }
 
 MainWindow::~MainWindow()
@@ -62,11 +60,12 @@ MainWindow::~MainWindow()
     delete copy;
     delete paste;
 
+    delete heightDist;
+    delete MaxwellDist;
+
     delete toolBar;
     delete statusBr;
     delete about;
-
-    delete heightBars;
 
     deleteStatusBar();
     //delete scene;
@@ -83,9 +82,15 @@ void MainWindow::toolBarSlot(bool checked)
 void MainWindow::statusBarSlot(bool checked)
 {
     if (checked)
+    {
         ui->statusBar->setVisible(true);
+        ui->Particles->setGeometry(0, 10, this->width(), this->height()-ui->statusBar->geometry().height()-44);
+    }
     else
+    {
         ui->statusBar->setVisible(false);
+        ui->Particles->setGeometry(0, 10, this->width(), this->height()-43);
+    }
 }
 
 void MainWindow::exitSlot()
@@ -142,10 +147,69 @@ void MainWindow::onNewClick()
 {
 }
 
+void MainWindow::onHeightDistClick()
+{
+    if (senderW)
+    {
+        if (!graphWindows[0])
+        {
+            graphWindows[0] = new GraphWindow;
+            senderW->setHeightDistActive(true);
+            connect(senderW, SIGNAL(RedrawHeightGraph(const QVector<double>*)), graphWindows[0], SLOT(updateHeightGraph(const QVector<double>*)));
+            connect(graphWindows[0], SIGNAL(destroyed()), this, SLOT(onHeightDistClose()));
+            qDebug()<<"new GraphWindow";
+        }
+
+        graphWindows[0]->setWindowFlags( Qt::Window );
+        graphWindows[0]->setWindowTitle("Height Distribution");
+        graphWindows[0]->show();
+    }
+}
+
+void MainWindow::onMaxwellDistClick()
+{
+    if (senderW)
+    {
+        if (!graphWindows[1])
+        {
+            graphWindows[1] = new GraphWindow;
+            senderW->setMaxwellDistActive(true);
+            connect(senderW, SIGNAL(RedrawMaxwellDistGraph(const QVector<double>*)), graphWindows[1], SLOT(updateMaxwellDistGraph(const QVector<double>*)));
+            connect(graphWindows[1], SIGNAL(destroyed()), this, SLOT(onMaxwellDistClose()));
+            qDebug()<<"new GraphWindow";
+        }
+
+        graphWindows[1]->setWindowFlags( Qt::Window );
+        graphWindows[1]->setWindowTitle("Maxwell Distribution");
+        graphWindows[1]->show();
+    }
+}
+
+void MainWindow::onMaxwellDistClose()
+{
+    graphWindows[1] = nullptr;
+    senderW->setMaxwellDistActive(false);
+}
+
+void MainWindow::onHeightDistClose()
+{
+    graphWindows[0] = nullptr;
+    senderW->setHeightDistActive(false);
+}
+
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
-    QSize size = this->size();
-    ui->Particles->resize(size.width(), size.height());
+    if(ui->statusBar->isVisible() || statusBr->isChecked())
+        ui->Particles->setGeometry(0, 10, this->width(), this->height()-ui->statusBar->geometry().height()-44);
+    else
+        ui->Particles->setGeometry(0, 10, this->width(), this->height()-43);
+    ui->Particles->resizeGL(ui->Particles->width(), ui->Particles->height());
+
+    //Если кривой ресайз, раскомментить это:
+    //QSize partSize = ui->Particles->size();
+    //ui->Particles->resize(partSize.width() - 50, partSize.height() - 50);
+    //ui->Particles->resize(partSize.width(), partSize.height());
+
     QMainWindow::resizeEvent(event);
 }
 
@@ -183,6 +247,10 @@ void MainWindow::createActions()
     paste =  new QAction(tr("&Paste"), this);
     paste->setShortcut(QKeySequence::Paste);
 
+
+    heightDist = new QAction(tr("&Height distribution"), this);
+    MaxwellDist = new QAction(tr("&Maxwell distribution"), this);
+
     toolBar = new QAction(tr("&Toolbar"), this);
     toolBar->setCheckable(true);
     toolBar->setChecked(true);
@@ -206,6 +274,9 @@ void MainWindow::createActions()
     connect(saveAs, SIGNAL(triggered()), this, SLOT(onSaveAsClick()));
     connect(save, SIGNAL(triggered()), this, SLOT(onSaveClick()));
     connect(open, SIGNAL(triggered()), this, SLOT(onOpenClick()));
+    connect(heightDist, SIGNAL(triggered()), this, SLOT(onHeightDistClick()));
+    connect(MaxwellDist, SIGNAL(triggered()), this, SLOT(onMaxwellDistClick()));
+
     connect(toolBar, SIGNAL(triggered(bool)), this, SLOT(toolBarSlot(bool)));
     connect(statusBr, SIGNAL(triggered(bool)), this, SLOT(statusBarSlot(bool)));
     connect(about, SIGNAL(triggered()), this, SLOT(onAboutClick()));
@@ -236,6 +307,10 @@ void MainWindow::createMenus()
     editMenu->addAction(cut);
     editMenu->addAction(copy);
     editMenu->addAction(paste);
+
+    charts = ui->menuBar->addMenu(tr("&Charts"));
+    charts->addAction(heightDist);
+    charts->addAction(MaxwellDist);
 
     viewMenu = ui->menuBar->addMenu(tr("&View"));
     viewMenu->addAction(toolBar);
@@ -280,41 +355,20 @@ void MainWindow::deleteStatusBar()
         delete statusRight;
 }
 
-
-void MainWindow::updateHeightGraph(QVector<int> data)
-{
-    QVector<double> heights;
-    QVector<double> counts;
-    for (int i : data) {
-        heights << heights.size() + 1;
-        counts << i;
-    }
-
-    ui->heightsGraph->xAxis->setRange(1, (double)data.size());
-    heightBars->setData(heights, counts);
-    ui->heightsGraph->replot();
-}
-
 void MainWindow::onWorldInitialized() {
-
-    //TODO: find the way to avoid this
-    ui->Particles->setGeometry(0, 10, ui->Particles->width(), ui->Particles->height());
-
     // Show a window since it is hidden
     //CWorld* senderW = qobject_cast<CWorld*>(sender());
     senderW = qobject_cast<CWorld*>(sender());
     this->show();
-
     this->ui->Particles->resizeGL(ui->Particles->width(), ui->Particles->height());
 
     this->ui->Particles->initializeWorld(senderW);
     connect(senderW, SIGNAL(RedrawWorld(SGeometry)), this->ui->Particles, SLOT(OnRenderScene(SGeometry)));
     connect(senderW, SIGNAL(onParticleSCountChange()), this, SLOT(updateStatusBar()));
-    connect(senderW, SIGNAL(RedrawHeightGraph(QVector<int>)), this, SLOT(updateHeightGraph(QVector<int>)));
 
-    QSize partSize = ui->Particles->size();
-    ui->Particles->resize(partSize.width() - 50, partSize.height() - 50);
-    ui->Particles->resize(partSize.width(), partSize.height());
+    //QSize partSize = ui->Particles->size();
+    //ui->Particles->resize(partSize.width() - 50, partSize.height() - 50);
+    //ui->Particles->resize(partSize.width(), partSize.height());
 
     return;
 }

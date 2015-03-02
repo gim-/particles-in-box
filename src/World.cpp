@@ -387,7 +387,7 @@ void CWorld::OnIdle()
     if ((nTimeSteps % 1000) == 0) {
         WriteStat();
         emit onParticleSCountChange();
-        emit RedrawHeightGraph(CalculateHeightDistribution());
+
     }
 
     bool bChanged = OneTimeStep();
@@ -400,6 +400,11 @@ void CWorld::OnIdle()
 	{
         emit RedrawWorld(this->Geometry);
 
+        //if it works slow then put it here: if ((nTimeSteps % 1000) == 0)
+        if (HeightDistIsActive())
+            emit RedrawHeightGraph(CalculateHeightDistribution());
+        if (MaxwellDistIsActive())
+            emit RedrawMaxwellDistGraph(CalculateMaxwellDistDistribution());
 	}
 }
 
@@ -609,14 +614,20 @@ void CWorld::onApplicationTerminate() {
  * Промежуток Ymin..Ymax разбивается поровну на Heights промежутков
  * Функция возвращает вектор с количеством частиц в каждом промежутке
  */
-QVector<int> CWorld::CalculateHeightDistribution() {
-    QVector<int> result(Heights, 0);
+const QVector<double> *CWorld::CalculateHeightDistribution() {
+    //QVector<int> result(Heights, 0);
+    heightDistrArr.fill(0, Heights);//= QVector<int>(Heights, 0);
     double dy = (Geometry.ParticleYmax - Geometry.ParticleYmin) / Heights;
     for (int i = 0, height; i < GetParticleCount(); i++) {
         height = (particle[i].y - Geometry.ParticleYmin) / dy;
         if (height >= Heights) height = Heights - 1; // workaround for the formula
         else if (height < 0) height = 0;
-        result[height] ++;
+        heightDistrArr[height] ++;
     }
-    return result;
+    return &heightDistrArr;
+}
+
+const QVector<double> *CWorld::CalculateMaxwellDistDistribution()
+{
+
 }

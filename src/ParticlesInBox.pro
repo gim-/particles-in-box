@@ -20,7 +20,8 @@ HEADERS  += mainwindow.h \
     World.h \
     worldsettings.h \
     qcustomplot.h \
-    calcthread.h
+    calcthread.h \
+    graphwindow.h
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -29,9 +30,11 @@ SOURCES += main.cpp\
     World.cpp \
     worldsettings.cpp \
     qcustomplot.cpp \
-    calcthread.cpp
+    calcthread.cpp \
+    graphwindow.cpp
 
 
 FORMS    += mainwindow.ui \
     aboutwindow.ui \
-    worldsettings.ui
+    worldsettings.ui \
+    graphwindow.ui
