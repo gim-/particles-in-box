@@ -366,9 +366,9 @@ void MainWindow::onWorldInitialized() {
     connect(senderW, SIGNAL(RedrawWorld(SGeometry)), this->ui->Particles, SLOT(OnRenderScene(SGeometry)));
     connect(senderW, SIGNAL(onParticleSCountChange()), this, SLOT(updateStatusBar()));
 
-    //QSize partSize = ui->Particles->size();
-    //ui->Particles->resize(partSize.width() - 50, partSize.height() - 50);
-    //ui->Particles->resize(partSize.width(), partSize.height());
+    QSize partSize = ui->Particles->size();
+    ui->Particles->resize(partSize.width() - 50, partSize.height() - 50);
+    ui->Particles->resize(partSize.width(), partSize.height());
 
     return;
 }
