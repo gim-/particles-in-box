@@ -2,7 +2,8 @@
 #define GRAPHWINDOW_H
 
 #include <QWidget>
-#include "World.h"
+#include <QTimer>
+//#include "World.h"
 #include "qcustomplot.h"
 
 namespace Ui {
@@ -20,12 +21,15 @@ protected:
     void resizeEvent(QResizeEvent* event);
 
 private slots:
-    void updateHeightGraph(const QVector<double> *data) const;
+    void updateHeightGraph(const QVector<double> *data);
     void updateMaxwellDistGraph(const QVector<double> *data) const;
+    void rangeCheck();
     void closeEvent(QCloseEvent *);
 private:
     Ui::GraphWindow *ui;
     QCPBars* heightBars = nullptr;
+    QTimer rangeTimer;
+    double maxYHeightGraph;
 };
 
 #endif // GRAPHWINDOW_H

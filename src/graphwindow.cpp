@@ -14,7 +14,8 @@ GraphWindow::GraphWindow(QWidget *parent) :
     heightBars->setName("Height distribution");
     ui->graph->xAxis->setLabel("Heights");
     ui->graph->yAxis->setLabel("Particles");
-    ui->graph->yAxis->setRange(0.0, 300.0);
+    //ui->graph->yAxis->setRange(0.0, 300.0);
+    connect(&rangeTimer, SIGNAL(timeout()), this, SLOT(rangeCheck()));
 }
 
 GraphWindow::~GraphWindow()
@@ -23,7 +24,7 @@ GraphWindow::~GraphWindow()
     delete ui;
 }
 
-void GraphWindow::updateHeightGraph(const QVector<double>* data) const
+void GraphWindow::updateHeightGraph(const QVector<double>* data)
 {
     QVector<double> heights(data->size());
     //QVector<double> counts;
@@ -34,7 +35,18 @@ void GraphWindow::updateHeightGraph(const QVector<double>* data) const
 //    }
     for (int i = 0; i<heights.size(); i++)
         heights[i] = ++heightsCount;
-    ui->graph->xAxis->setRange(1, data->size());
+
+    maxYHeightGraph = *std::max_element(data->begin(), data->end());
+    if (maxYHeightGraph>ui->graph->yAxis->range().upper)
+    {
+        ui->graph->yAxis->setRange(0.0, maxYHeightGraph);
+        if (!rangeTimer.isActive())
+        {
+            rangeTimer.start(1100);
+        }
+    }
+
+    ui->graph->xAxis->setRange(1, heightsCount);//data->size());
     heightBars->setData(heights, *data);
     //heightBars->setData(heights,counts);
     ui->graph->replot();
@@ -43,6 +55,14 @@ void GraphWindow::updateHeightGraph(const QVector<double>* data) const
 void GraphWindow::updateMaxwellDistGraph(const QVector<double> *data) const
 {
 
+}
+
+void GraphWindow::rangeCheck()
+{
+    if (ui->graph->yAxis->range().upper>maxYHeightGraph)
+    {
+        ui->graph->yAxis->setRange(0.0, maxYHeightGraph+70);
+    }
 }
 
 void GraphWindow::closeEvent(QCloseEvent *)
