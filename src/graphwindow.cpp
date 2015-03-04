@@ -12,8 +12,8 @@ GraphWindow::GraphWindow(QWidget *parent) :
     ui->graph->setGeometry(0,0, this->width(), this->height());
     ui->graph->addPlottable(heightBars);
     heightBars->setName("Height distribution");
-    ui->graph->xAxis->setLabel("Layers");
-    ui->graph->yAxis->setLabel("Particles");
+    ui->graph->xAxis->setLabel("");
+    ui->graph->yAxis->setLabel("");
     //ui->graph->yAxis->setRange(0.0, 300.0);
     connect(&rangeTimer, SIGNAL(timeout()), this, SLOT(rangeCheck()));
 }
@@ -40,10 +40,6 @@ void GraphWindow::updateHeightGraph(const QVector<double>* data)
     if (maxYHeightGraph>ui->graph->yAxis->range().upper)
     {
         ui->graph->yAxis->setRange(0.0, maxYHeightGraph);
-        if (!rangeTimer.isActive())
-        {
-            rangeTimer.start(1100);
-        }
     }
 
     ui->graph->xAxis->setRange(1, heightsCount);//data->size());

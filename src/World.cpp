@@ -626,13 +626,22 @@ void CWorld::onApplicationTerminate() {
 const QVector<double> *CWorld::CalculateHeightDistribution() {
     //QVector<int> result(Heights, 0);
     heightDistrArr.fill(0, Heights);//= QVector<int>(Heights, 0);
+    double* aV = new double[Heights](); // average velocity
+    int* pC = new int[Heights](); // particle count
+
     double dy = (Geometry.ParticleYmax - Geometry.ParticleYmin) / Heights;
     for (int i = 0, height; i < GetParticleCount(); i++) {
         height = (particle[i].y - Geometry.ParticleYmin) / dy;
         if (height >= Heights) height = Heights - 1; // workaround for the formula
         else if (height < 0) height = 0;
-        heightDistrArr[height] ++;
+        pC[height] ++;
+        aV[height] += GetVelocity(particle[i]);
     }
+    for (int i = 0; i < Heights; i++) {
+        heightDistrArr[i] = aV[i] / pC[i];
+    }
+    delete[] aV;
+    delete[] pC;
     return &heightDistrArr;
 }
 
