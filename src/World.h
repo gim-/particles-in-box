@@ -128,7 +128,6 @@ protected:
 	double Distance(SParticle &p1, SParticle &p2) { return sqrt(Distance2(p1, p2)); }
     bool InContact(SParticle &p1, SParticle &p2) { return (Distance(p1, p2) < 2*Geometry.Rparticle); }
     bool Approaching(SParticle &p1, SParticle &p2);
-	double GetVelocity(SParticle &p) { return sqrt(p.vx*p.vx + p.vy*p.vy); }
 	void Collision(SParticle &p1, SParticle &p2);
     void RandomVelocity(SParticle &p);
 	void RecalcStat();
@@ -165,6 +164,7 @@ protected:
 
     QString FileName;		// Имя файла с записанной статистикой
     QVector<double> heightDistrArr;
+    QVector<double> maxwellDistrArr;
 
 	// Вычисляемые величины (переменные)
 	unsigned long	nTimeSteps;			// Количество пройденных шагов по времени

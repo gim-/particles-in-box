@@ -22,7 +22,7 @@ protected:
 
 private slots:
     void updateHeightGraph(const QVector<double> *data);
-    void updateMaxwellDistGraph(const QVector<double> *data) const;
+    void updateMaxwellDistGraph(const QVector<double> *data);
     void rangeCheck();
     void closeEvent(QCloseEvent *);
 private:

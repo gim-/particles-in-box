@@ -31,6 +31,7 @@ Revision history:
 
 #include "World.h"
 #include <stdlib.h>
+#include <algorithm>
 #include <time.h>
 #include "worldsettings.h"
 #include "mainwindow.h"
@@ -47,6 +48,13 @@ const char *pszSectionName = "Values";
 const double PI = 3.1415926;
 
 #define RGB(r,g,b) ((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff)
+
+
+
+double GetVelocity(const SParticle &p) {
+    return sqrt(p.vx*p.vx + p.vy*p.vy);
+}
+
 
 ///////////////////////////////////////////////////////////////////////////
 // CWorld
@@ -198,7 +206,7 @@ double CWorld::CalcTimeStep()
 	double V, Vmax = 0;
 	for (int i = 0; i < GetParticleCount(); i++)
 	{
-		V = GetVelocity(particle[i]);
+        V = GetVelocity(particle[i]);
 		if (V > Vmax)
 			Vmax = V;
 	}
@@ -400,11 +408,12 @@ void CWorld::OnIdle()
 	{
         emit RedrawWorld(this->Geometry);
 
-        //if it works slow then put it here: if ((nTimeSteps % 1000) == 0)
-        if (HeightDistIsActive())
-            emit RedrawHeightGraph(CalculateHeightDistribution());
-        if (MaxwellDistIsActive())
-            emit RedrawMaxwellDistGraph(CalculateMaxwellDistDistribution());
+        if ((nTimeSteps % 150) == 0) {
+            if (HeightDistIsActive())
+                emit RedrawHeightGraph(CalculateHeightDistribution());
+            if (MaxwellDistIsActive())
+                emit RedrawMaxwellDistGraph(CalculateMaxwellDistDistribution());
+        }
 	}
 }
 
@@ -503,7 +512,7 @@ bool CWorld::OneTimeStep()
 	}
 
 	Time = Time+DeltaTime;
-	nTimeSteps = nTimeSteps+1;
+    nTimeSteps = nTimeSteps+1;
     return true;
 }
 
@@ -627,7 +636,22 @@ const QVector<double> *CWorld::CalculateHeightDistribution() {
     return &heightDistrArr;
 }
 
+
+bool maxParticleSpeed(const SParticle& A, const SParticle& B) {
+    return (GetVelocity(A) <= GetVelocity(B));
+}
+
+
 const QVector<double> *CWorld::CalculateMaxwellDistDistribution()
 {
-
+    const SParticle* fastest = std::max_element(particle, particle + GetParticleCount(), maxParticleSpeed);
+    double dV = GetVelocity(*fastest) / 40;
+    maxwellDistrArr.fill(0, 40);
+    for (int i = 0, speed; i < GetParticleCount(); i++) {
+        speed = GetVelocity(particle[i]) / dV;
+        if (speed >= 40) speed = 39;
+        else if (speed < 0) speed = 0;
+        maxwellDistrArr[speed] ++;
+    }
+    return &maxwellDistrArr;
 }
