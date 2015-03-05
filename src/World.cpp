@@ -28,12 +28,10 @@ Revision history:
 	02 Mar 2007 - initial creation
 
 */
-#define _USE_MATH_DEFINES
 #include "World.h"
 #include <stdlib.h>
 #include <algorithm>
 #include <time.h>
-#include <limits>
 #include "worldsettings.h"
 #include "mainwindow.h"
 #include "calcthread.h"
@@ -638,9 +636,7 @@ const QVector<double> *CWorld::CalculateHeightDistribution() {
         aV[height] += GetVelocity(particle[i]);
     }
     for (int i = 0; i < Heights; i++) {
-        double calc = aV[i] / pC[i];
-        if(calc <= __DBL_MAX__)
-            heightDistrArr[i] = calc;
+        heightDistrArr[i] = (pC[i] != 0) ? aV[i] / pC[i] : 0;
     }
     delete[] aV;
     delete[] pC;
