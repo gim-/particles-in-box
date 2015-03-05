@@ -28,11 +28,12 @@ Revision history:
 	02 Mar 2007 - initial creation
 
 */
-
+#define _USE_MATH_DEFINES
 #include "World.h"
 #include <stdlib.h>
 #include <algorithm>
 #include <time.h>
+#include <limits>
 #include "worldsettings.h"
 #include "mainwindow.h"
 #include "calcthread.h"
@@ -45,7 +46,7 @@ Revision history:
 const char *pszUnknownFileName = "<unknown>";
 const char *pszSectionName = "Values";
 
-const double PI = 3.1415926;
+const double PI = M_PI;//3.1415926;
 
 #define RGB(r,g,b) ((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff)
 
@@ -407,14 +408,13 @@ void CWorld::OnIdle()
     if ((nTimeSteps % 30) == 0)
 	{
         emit RedrawWorld(this->Geometry);
-
-        if ((nTimeSteps % 150) == 0) {
-            if (HeightDistIsActive())
-                emit RedrawHeightGraph(CalculateHeightDistribution());
-            if (MaxwellDistIsActive())
-                emit RedrawMaxwellDistGraph(CalculateMaxwellDistDistribution());
-        }
 	}
+    if ((nTimeSteps % 150) == 0) {
+        if (HeightDistIsActive())
+            emit RedrawHeightGraph(CalculateHeightDistribution());
+        if (MaxwellDistIsActive())
+            emit RedrawMaxwellDistGraph(CalculateMaxwellDistDistribution());
+    }
 }
 
 void CWorld::MoveParticle(SParticle &p, double dt)
@@ -629,7 +629,7 @@ const QVector<double> *CWorld::CalculateHeightDistribution() {
     double* aV = new double[Heights](); // average velocity
     int* pC = new int[Heights](); // particle count
 
-    double dy = (Geometry.ParticleYmax - Geometry.ParticleYmin) / Heights;
+    long double dy = (Geometry.ParticleYmax - Geometry.ParticleYmin) / Heights;
     for (int i = 0, height; i < GetParticleCount(); i++) {
         height = (particle[i].y - Geometry.ParticleYmin) / dy;
         if (height >= Heights) height = Heights - 1; // workaround for the formula
@@ -638,7 +638,9 @@ const QVector<double> *CWorld::CalculateHeightDistribution() {
         aV[height] += GetVelocity(particle[i]);
     }
     for (int i = 0; i < Heights; i++) {
-        heightDistrArr[i] = aV[i] / pC[i];
+        double calc = aV[i] / pC[i];
+        if(calc <= __DBL_MAX__)
+            heightDistrArr[i] = calc;
     }
     delete[] aV;
     delete[] pC;

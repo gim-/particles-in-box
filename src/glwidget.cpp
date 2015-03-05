@@ -27,11 +27,6 @@ GLWidget::GLWidget(QWidget *parent) :
 {
 }
 
-
-
-
-
-
 void GLWidget::initializeGL()
 {
     setFormat(QGLFormat(QGL::DoubleBuffer));
@@ -73,7 +68,7 @@ void GLWidget::paintGL()
     glLoadIdentity();
 
 
-    const double sin45 = 0.70710678118654752440084436210485;
+    const double sin45 = 0.70710678118654752440084436210485d;
     const double cos45 = sin45;
     SGeometry *pGeometry = &mGeometry;
     double R = pGeometry->Rparticle;
