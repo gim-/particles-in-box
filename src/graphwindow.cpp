@@ -2,20 +2,24 @@
 #include "ui_graphwindow.h"
 #include <QDebug>
 
-GraphWindow::GraphWindow(QWidget *parent) :
+GraphWindow::GraphWindow(QString xlabel, QString ylabel, QWidget *parent):
     QWidget(parent),
-    ui(new Ui::GraphWindow)
-{
+    ui(new Ui::GraphWindow) {
     ui->setupUi(this);
 
     heightBars = new QCPBars(ui->graph->xAxis, ui->graph->yAxis);
     ui->graph->setGeometry(0,0, this->width(), this->height());
     ui->graph->addPlottable(heightBars);
-    heightBars->setName("Height distribution");
-    ui->graph->xAxis->setLabel("");
-    ui->graph->yAxis->setLabel("");
-    //ui->graph->yAxis->setRange(0.0, 300.0);
+    ui->graph->xAxis->setLabel(xlabel);
+    ui->graph->yAxis->setLabel(ylabel);
     connect(&rangeTimer, SIGNAL(timeout()), this, SLOT(rangeCheck()));
+
+    heightBars->setName("Height distribution");
+}
+
+GraphWindow::GraphWindow(QWidget *parent) :
+    GraphWindow("", "", parent)
+{
 }
 
 GraphWindow::~GraphWindow()
@@ -27,12 +31,8 @@ GraphWindow::~GraphWindow()
 void GraphWindow::updateHeightGraph(const QVector<double>* data)
 {
     QVector<double> heights(data->size());
-    //QVector<double> counts;
     int heightsCount = 0;
-//    for (const int &i : *data) {
-//        heights << heights.size() + 1;
-//        counts << i;
-//    }
+
     for (int i = 0; i<heights.size(); i++)
         heights[i] = ++heightsCount;
 
@@ -42,21 +42,16 @@ void GraphWindow::updateHeightGraph(const QVector<double>* data)
         ui->graph->yAxis->setRange(0.0, maxYHeightGraph);
     }
 
-    ui->graph->xAxis->setRange(1, heightsCount);//data->size());
+    ui->graph->xAxis->setRange(1, heightsCount);
     heightBars->setData(heights, *data);
-    //heightBars->setData(heights,counts);
     ui->graph->replot();
 }
 
 void GraphWindow::updateMaxwellDistGraph(const QVector<double> *data)
 {
     QVector<double> heights(data->size());
-    //QVector<double> counts;
+
     int heightsCount = 0;
-//    for (const int &i : *data) {
-//        heights << heights.size() + 1;
-//        counts << i;
-//    }
     for (int i = 0; i<heights.size(); i++)
         heights[i] = ++heightsCount;
 
@@ -70,9 +65,8 @@ void GraphWindow::updateMaxwellDistGraph(const QVector<double> *data)
         }
     }
 
-    ui->graph->xAxis->setRange(0, 40);//data->size());
+    ui->graph->xAxis->setRange(0, 40);
     heightBars->setData(heights, *data);
-    //heightBars->setData(heights,counts);
     ui->graph->replot();
 }
 

@@ -16,6 +16,7 @@ class GraphWindow : public QWidget
 
 public:
     explicit GraphWindow(QWidget *parent = nullptr);
+    explicit GraphWindow(QString xlabel, QString ylabel, QWidget *parent = nullptr);
     ~GraphWindow();
 protected:
     void resizeEvent(QResizeEvent* event);

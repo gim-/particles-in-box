@@ -153,7 +153,7 @@ void MainWindow::onHeightDistClick()
     {
         if (!graphWindows[0])
         {
-            graphWindows[0] = new GraphWindow;
+            graphWindows[0] = new GraphWindow("H", "<V>");
             senderW->setHeightDistActive(true);
             connect(senderW, SIGNAL(RedrawHeightGraph(const QVector<double>*)), graphWindows[0], SLOT(updateHeightGraph(const QVector<double>*)));
             connect(graphWindows[0], SIGNAL(destroyed()), this, SLOT(onHeightDistClose()));
@@ -172,7 +172,7 @@ void MainWindow::onMaxwellDistClick()
     {
         if (!graphWindows[1])
         {
-            graphWindows[1] = new GraphWindow;
+            graphWindows[1] = new GraphWindow("V", "N", this);
             senderW->setMaxwellDistActive(true);
             connect(senderW, SIGNAL(RedrawMaxwellDistGraph(const QVector<double>*)), graphWindows[1], SLOT(updateMaxwellDistGraph(const QVector<double>*)));
             connect(graphWindows[1], SIGNAL(destroyed()), this, SLOT(onMaxwellDistClose()));
@@ -204,11 +204,6 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     else
         ui->Particles->setGeometry(0, 10, this->width(), this->height()-43);
     ui->Particles->resizeGL(ui->Particles->width(), ui->Particles->height());
-
-    //Если кривой ресайз, раскомментить это:
-    //QSize partSize = ui->Particles->size();
-    //ui->Particles->resize(partSize.width() - 50, partSize.height() - 50);
-    //ui->Particles->resize(partSize.width(), partSize.height());
 
     QMainWindow::resizeEvent(event);
 }
