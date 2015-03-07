@@ -412,6 +412,8 @@ void CWorld::OnIdle()
             emit RedrawHeightGraph(CalculateHeightDistribution());
         if (MaxwellDistIsActive())
             emit RedrawMaxwellDistGraph(CalculateMaxwellDistDistribution());
+        if (ParticleDistIsActive())
+            emit RedrawParticleDistGraph(CalculateParticleDistribution());
     }
 }
 
@@ -643,6 +645,20 @@ const QVector<double> *CWorld::CalculateHeightDistribution() {
     return &heightDistrArr;
 }
 
+
+const QVector<double> *CWorld::CalculateParticleDistribution() {
+    //QVector<int> result(Heights, 0);
+    particleDistrArr.fill(0, Heights);//= QVector<int>(Heights, 0);
+
+    long double dy = (Geometry.ParticleYmax - Geometry.ParticleYmin) / Heights;
+    for (int i = 0, height; i < GetParticleCount(); i++) {
+        height = (particle[i].y - Geometry.ParticleYmin) / dy;
+        if (height >= Heights) height = Heights - 1; // workaround for the formula
+        else if (height < 0) height = 0;
+        particleDistrArr[height] ++;
+    }
+    return &particleDistrArr;
+}
 
 bool maxParticleSpeed(const SParticle& A, const SParticle& B) {
     return (GetVelocity(A) <= GetVelocity(B));

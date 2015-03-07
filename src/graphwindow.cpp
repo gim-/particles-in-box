@@ -47,6 +47,25 @@ void GraphWindow::updateHeightGraph(const QVector<double>* data)
     ui->graph->replot();
 }
 
+void GraphWindow::updateParticleDistGraph(const QVector<double>* data)
+{
+    QVector<double> heights(data->size());
+    int heightsCount = 0;
+
+    for (int i = 0; i<heights.size(); i++)
+        heights[i] = ++heightsCount;
+
+    maxYHeightGraph = *std::max_element(data->begin(), data->end());
+    if (maxYHeightGraph>ui->graph->yAxis->range().upper)
+    {
+        ui->graph->yAxis->setRange(0.0, maxYHeightGraph);
+    }
+
+    ui->graph->xAxis->setRange(1, heightsCount);
+    heightBars->setData(heights, *data);
+    ui->graph->replot();
+}
+
 void GraphWindow::updateMaxwellDistGraph(const QVector<double> *data)
 {
     QVector<double> heights(data->size());

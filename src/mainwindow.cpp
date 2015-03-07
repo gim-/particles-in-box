@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     createStatusBar();
     //------------------
     //Setting amount of graphWindows
-    graphWindows.fill(nullptr, 2); //два окна с графоном... пока
+    graphWindows.fill(nullptr, 3); //два окна с графоном... пока
     //------------------
 }
 
@@ -62,6 +62,7 @@ MainWindow::~MainWindow()
 
     delete heightDist;
     delete MaxwellDist;
+    delete particleDist;
 
     delete toolBar;
     delete statusBr;
@@ -157,11 +158,10 @@ void MainWindow::onHeightDistClick()
             senderW->setHeightDistActive(true);
             connect(senderW, SIGNAL(RedrawHeightGraph(const QVector<double>*)), graphWindows[0], SLOT(updateHeightGraph(const QVector<double>*)));
             connect(graphWindows[0], SIGNAL(destroyed()), this, SLOT(onHeightDistClose()));
-            qDebug()<<"new GraphWindow";
         }
 
         graphWindows[0]->setWindowFlags( Qt::Window );
-        graphWindows[0]->setWindowTitle("Height Distribution");
+        graphWindows[0]->setWindowTitle("Speed Distribution");
         graphWindows[0]->show();
     }
 }
@@ -176,7 +176,6 @@ void MainWindow::onMaxwellDistClick()
             senderW->setMaxwellDistActive(true);
             connect(senderW, SIGNAL(RedrawMaxwellDistGraph(const QVector<double>*)), graphWindows[1], SLOT(updateMaxwellDistGraph(const QVector<double>*)));
             connect(graphWindows[1], SIGNAL(destroyed()), this, SLOT(onMaxwellDistClose()));
-            qDebug()<<"new GraphWindow";
         }
 
         graphWindows[1]->setWindowFlags( Qt::Window );
@@ -184,6 +183,33 @@ void MainWindow::onMaxwellDistClick()
         graphWindows[1]->show();
     }
 }
+
+
+void MainWindow::onParticleDistClick()
+{
+    if (senderW)
+    {
+        if (!graphWindows[2])
+        {
+            graphWindows[2] = new GraphWindow("H", "N", this);
+            senderW->setParticleDistActive(true);
+            connect(senderW, SIGNAL(RedrawParticleDistGraph(const QVector<double>*)), graphWindows[2], SLOT(updateParticleDistGraph(const QVector<double>*)));
+            connect(graphWindows[2], SIGNAL(destroyed()), this, SLOT(onMaxwellDistClose()));
+        }
+
+        graphWindows[2]->setWindowFlags( Qt::Window );
+        graphWindows[2]->setWindowTitle("Particle Distribution");
+        graphWindows[2]->show();
+    }
+}
+
+void MainWindow::onParticleDistClose()
+{
+    graphWindows[2] = nullptr;
+    senderW->setParticleDistActive(false);
+}
+
+
 
 void MainWindow::onMaxwellDistClose()
 {
@@ -245,6 +271,7 @@ void MainWindow::createActions()
 
     heightDist = new QAction(tr("&Height distribution"), this);
     MaxwellDist = new QAction(tr("&Maxwell distribution"), this);
+    particleDist = new QAction(tr("&Particle distribution"), this);
 
     toolBar = new QAction(tr("&Toolbar"), this);
     toolBar->setCheckable(true);
@@ -271,6 +298,7 @@ void MainWindow::createActions()
     connect(open, SIGNAL(triggered()), this, SLOT(onOpenClick()));
     connect(heightDist, SIGNAL(triggered()), this, SLOT(onHeightDistClick()));
     connect(MaxwellDist, SIGNAL(triggered()), this, SLOT(onMaxwellDistClick()));
+    connect(particleDist, SIGNAL(triggered()), this, SLOT(onParticleDistClick()));
 
     connect(toolBar, SIGNAL(triggered(bool)), this, SLOT(toolBarSlot(bool)));
     connect(statusBr, SIGNAL(triggered(bool)), this, SLOT(statusBarSlot(bool)));
@@ -306,6 +334,7 @@ void MainWindow::createMenus()
     charts = ui->menuBar->addMenu(tr("&Charts"));
     charts->addAction(heightDist);
     charts->addAction(MaxwellDist);
+    charts->addAction(particleDist);
 
     viewMenu = ui->menuBar->addMenu(tr("&View"));
     viewMenu->addAction(toolBar);

@@ -104,6 +104,7 @@ public:
     unsigned char *getRightColor() { return m_RightColor.c; }
     void setHeightDistActive(bool isActive) {heightDistActive = isActive;}
     void setMaxwellDistActive(bool isActive) {maxwellDistActive = isActive;}
+    void setParticleDistActive(bool isActive) {particleDistActive = isActive;}
 
 
 // Public members
@@ -140,8 +141,10 @@ protected:
 
     const QVector<double> *CalculateHeightDistribution();
     const QVector<double> *CalculateMaxwellDistDistribution();
-    bool HeightDistIsActive() {return heightDistActive;}
-    bool MaxwellDistIsActive() {return maxwellDistActive;}
+    const QVector<double> *CalculateParticleDistribution();
+    bool HeightDistIsActive() const {return heightDistActive;}
+    bool MaxwellDistIsActive() const {return maxwellDistActive;}
+    bool ParticleDistIsActive() const {return particleDistActive; }
 
 // Private methods
 private:
@@ -165,6 +168,7 @@ protected:
     QString FileName;		// Имя файла с записанной статистикой
     QVector<double> heightDistrArr;
     QVector<double> maxwellDistrArr;
+    QVector<double> particleDistrArr;
 
 	// Вычисляемые величины (переменные)
 	unsigned long	nTimeSteps;			// Количество пройденных шагов по времени
@@ -180,6 +184,7 @@ protected:
 
     bool heightDistActive = false;
     bool maxwellDistActive = false;
+    bool particleDistActive = false;
 
 // Private members
 private:
@@ -196,6 +201,7 @@ signals:
     void onParticleSCountChange();
     void RedrawHeightGraph(const QVector<double>*);
     void RedrawMaxwellDistGraph(const QVector<double>*);
+    void RedrawParticleDistGraph(const QVector<double>*);
 };
 
 

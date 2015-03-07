@@ -54,6 +54,8 @@ private slots:
     void onHeightDistClose();
     void onMaxwellDistClick();
     void onMaxwellDistClose();
+    void onParticleDistClick();
+    void onParticleDistClose();
 public slots:
     void onWorldInitialized();
 private slots:
@@ -92,6 +94,7 @@ private:
     QAction *paste = nullptr;
 
     QAction *heightDist = nullptr;
+    QAction *particleDist = nullptr;
     QAction *MaxwellDist = nullptr;
 
     QAction *toolBar = nullptr;

@@ -24,6 +24,7 @@ protected:
 private slots:
     void updateHeightGraph(const QVector<double> *data);
     void updateMaxwellDistGraph(const QVector<double> *data);
+    void updateParticleDistGraph(const QVector<double> *data);
     void rangeCheck();
     void closeEvent(QCloseEvent *);
 private:
