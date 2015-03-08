@@ -34,7 +34,7 @@ GraphWindow::GraphWindow(QString xlabel, QString ylabel, QWidget *parent):
     ui->graph->yAxis->setLabel(ylabel);
     connect(&rangeTimer, SIGNAL(timeout()), this, SLOT(rangeCheck()));
 
-    heightBars->setName("Height distribution");
+    //heightBars->setName("Height distribution");
 }
 
 GraphWindow::~GraphWindow()

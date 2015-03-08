@@ -270,7 +270,7 @@ void MainWindow::createActions()
     paste->setShortcut(QKeySequence::Paste);
 
 
-    heightDist = new QAction(tr("&Height distribution"), this);
+    heightDist = new QAction(tr("&Speed distribution"), this);
     MaxwellDist = new QAction(tr("&Maxwell distribution"), this);
     particleDist = new QAction(tr("&Particle distribution"), this);
 
