@@ -20,7 +20,6 @@ THE SOFTWARE.*/
 
 #include "glwidget.h"
 #include "World.h"
-#include <cmath>
 
 GLWidget::GLWidget(QWidget *parent) :
     QGLWidget(parent)
@@ -66,7 +65,6 @@ void GLWidget::paintGL()
 
     this->clearGL();
     glLoadIdentity();
-
 
     const double sin45 = 0.70710678118654752440084436210485d;
     const double cos45 = sin45;

@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     createStatusBar();
     //------------------
     //Setting amount of graphWindows
-    graphWindows.fill(nullptr, 3); //два окна с графоном... пока
+    graphWindows.fill(nullptr, 3);
     //------------------
 }
 
@@ -113,7 +113,7 @@ void MainWindow::onOpenClick()
     QFile file(fileName);
     if(!file.open(QIODevice::ReadOnly))
         return;
-    //working with opend file here...
+    //working with opened file here...
 
     //--------------------
 }
@@ -146,6 +146,7 @@ void MainWindow::onSaveAsClick()
 
 void MainWindow::onNewClick()
 {
+
 }
 
 void MainWindow::onHeightDistClick()
@@ -154,7 +155,7 @@ void MainWindow::onHeightDistClick()
     {
         if (!graphWindows[0])
         {
-            graphWindows[0] = new GraphWindow("H", "<V>");
+            graphWindows[0] = new GraphWindow("H", "<V>", this);
             senderW->setHeightDistActive(true);
             connect(senderW, SIGNAL(RedrawHeightGraph(const QVector<double>*)), graphWindows[0], SLOT(updateHeightGraph(const QVector<double>*)));
             connect(graphWindows[0], SIGNAL(destroyed()), this, SLOT(onHeightDistClose()));
@@ -194,7 +195,7 @@ void MainWindow::onParticleDistClick()
             graphWindows[2] = new GraphWindow("H", "N", this);
             senderW->setParticleDistActive(true);
             connect(senderW, SIGNAL(RedrawParticleDistGraph(const QVector<double>*)), graphWindows[2], SLOT(updateParticleDistGraph(const QVector<double>*)));
-            connect(graphWindows[2], SIGNAL(destroyed()), this, SLOT(onMaxwellDistClose()));
+            connect(graphWindows[2], SIGNAL(destroyed()), this, SLOT(onParticleDistClose()));
         }
 
         graphWindows[2]->setWindowFlags( Qt::Window );
