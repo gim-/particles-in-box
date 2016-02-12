@@ -344,7 +344,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>out.txt</string>
+     <string>out.bin</string>
     </property>
     <property name="readOnly">
      <bool>false</bool>

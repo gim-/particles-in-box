@@ -35,10 +35,11 @@ Revision history:
 #include "worldsettings.h"
 #include "mainwindow.h"
 #include "calcthread.h"
-
+#include <fstream>
 
 #include <QFile>
 
+using namespace std;
 
 
 const char *pszUnknownFileName = "<unknown>";
@@ -347,39 +348,73 @@ bool CWorld::InitialDistribution(WorldSettings* dlg)
 
 	CalcTimeStep();
     RecalcStat();
-    FILE *fd = fopen(FileName.toStdString().c_str(), "w");
-	if (fd)
+
+    ofstream out(FileName.toStdString(), ios::binary | ios::out);
+    if (out.is_open())
     {
-		fprintf(fd, "Particles:\n");
-		fprintf(fd, "nLeftParticles = %d\n", nLeftParticles);
-		fprintf(fd, "nRightParticles = %d\n", nRightParticles);
-		fprintf(fd, "RParticle = %g m\n", Geometry.Rparticle);
+        //box
+        out.write((char*)&Geometry.Xright, sizeof(Geometry.Xright));
+        out.write((char*)&Geometry.Ymax, sizeof(Geometry.Ymax));
 
-		fprintf(fd, "\nCollisions:\n");
-		fprintf(fd, "CollisionLossRatio = %g\n", loss);
-		fprintf(fd, "DeltaVbottom = %g m/sec\n", DeltaVbottom);
-		fprintf(fd, "DeltaVtop = %g m/sec\n", DeltaVtop);
-		fprintf(fd, "DeltaVside = %g m/sec\n", DeltaVside);
+        //Collisions
+        out.write((char*)&DeltaVtop, sizeof(DeltaVtop));
+        out.write((char*)&DeltaVbottom, sizeof(DeltaVbottom));
+        out.write((char*)&DeltaVside, sizeof(DeltaVside));
 
-		fprintf(fd, "\nGeometry:\n");
-		fprintf(fd, "Xleft = %g m\n", Geometry.Xleft);
-		fprintf(fd, "Xright = %g m\n", Geometry.Xright);
-		fprintf(fd, "Ytop = %g m\n", Geometry.Ymax);
-		fprintf(fd, "Ybottom = %g m\n", Geometry.Ymin);
-		fprintf(fd, "WallXPosition = %g m\n", Geometry.Xcenter);
-		fprintf(fd, "WallThickness = %g m\n", Geometry.WThickness);
-		fprintf(fd, "HolePosition = %g m\n", Geometry.HolePosition);
-		fprintf(fd, "HoleSize = %g m\n", Geometry.HoleSize);
+        //membrana
+        out.write((char*)&Geometry.Xcenter, sizeof(Geometry.Xcenter)); //x середины перегородки
+        out.write((char*)&Geometry.WThickness, sizeof(Geometry.WThickness)); //ширина
+        double YCenter = Geometry.YGapTop-Geometry.YGapBottom; //y середины дырки
+        out.write((char*)&YCenter, sizeof(YCenter));
+        out.write((char*)&Geometry.HoleSize, sizeof(Geometry.HoleSize)); //высота дырки
 
-		fprintf(fd, "\nInitial distribution:\n");
-		fprintf(fd, "Vinit = %g m/sec\n", Vinit);
+        //collision2
+        out.write((char*)&loss, sizeof(loss));
 
-		fprintf(fd, "\nOther:\n");
-		fprintf(fd, "g = %g m/sec**2\n", g);
+        //particles
+        out.write((char*)&Geometry.Rparticle, sizeof(Geometry.Rparticle)); //radius
 
-		fprintf(fd, "\nTime\tnLeft\t<V>left\t<flux>left\t\tnRight\t<V>right\t<flux>right\n");
-		fclose(fd);
+        //other
+        out.write((char*)&g, sizeof(g));
+        int partCount = GetParticleCount();
+        out.write((char*)&partCount, sizeof(partCount));
+        out.close();
     }
+
+//    FILE *fd = fopen(FileName.toStdString().c_str(), "w");
+//    if (fd)
+//    {
+//        fprintf(fd, "Particles:\n");
+//        fprintf(fd, "nLeftParticles = %d\n", nLeftParticles);
+//        fprintf(fd, "nRightParticles = %d\n", nRightParticles);
+//        fprintf(fd, "RParticle = %g m\n", Geometry.Rparticle);
+
+//        fprintf(fd, "\nCollisions:\n");
+//        fprintf(fd, "CollisionLossRatio = %g\n", loss);
+//        fprintf(fd, "DeltaVbottom = %g m/sec\n", DeltaVbottom);
+//        fprintf(fd, "DeltaVtop = %g m/sec\n", DeltaVtop);
+//        fprintf(fd, "DeltaVside = %g m/sec\n", DeltaVside);
+
+//        fprintf(fd, "\nGeometry:\n");
+//        fprintf(fd, "Xleft = %g m\n", Geometry.Xleft);
+//        fprintf(fd, "Xright = %g m\n", Geometry.Xright);
+//        fprintf(fd, "Ytop = %g m\n", Geometry.Ymax);
+//        fprintf(fd, "Ybottom = %g m\n", Geometry.Ymin);
+//        fprintf(fd, "WallXPosition = %g m\n", Geometry.Xcenter);
+//        fprintf(fd, "WallThickness = %g m\n", Geometry.WThickness);
+//        fprintf(fd, "HolePosition = %g m\n", Geometry.HolePosition);
+//        fprintf(fd, "HoleSize = %g m\n", Geometry.HoleSize);
+
+//        fprintf(fd, "\nInitial distribution:\n");
+//        fprintf(fd, "Vinit = %g m/sec\n", Vinit);
+
+//        fprintf(fd, "\nOther:\n");
+//        fprintf(fd, "g = %g m/sec**2\n", g);
+
+//        fprintf(fd, "\nTime\tnLeft\t<V>left\t<flux>left\t\tnRight\t<V>right\t<flux>right\n");
+//        fclose(fd);
+
+//    }
     emit onWorldInitialized();
     return true;
 }
@@ -440,25 +475,57 @@ void CWorld::MoveParticle(SParticle &p, double dt)
  */
 void CWorld::WriteStat()
 {
-    FILE *fd = fopen(FileName.toStdString().c_str(), "a");
-	if (fd)
-	{
-		double FluxFromLeft, FluxFromRight;
-		if (LastTimeWritten == Time)
-		{
-			FluxFromLeft = FluxFromRight = 0;
-		}
-		else
-		{
-			FluxFromLeft = nFluxFromLeft/(Time-LastTimeWritten);
-			FluxFromRight = nFluxFromRight/(Time-LastTimeWritten);
-		}
+    ofstream out(FileName.toStdString(), ios::binary | ios::out | ios::app);
+    if (out.is_open())
+    {
+//        double FluxFromLeft, FluxFromRight;
+//        if (LastTimeWritten == Time)
+//        {
+//            FluxFromLeft = FluxFromRight = 0;
+//        }
+//        else
+//        {
+//            FluxFromLeft = nFluxFromLeft/(Time-LastTimeWritten);
+//            FluxFromRight = nFluxFromRight/(Time-LastTimeWritten);
+//        }
+        out.write((char*)&Time, sizeof(Time));
+        for (int i = 0; i<GetParticleCount(); i++)
+        {
+            out.write((char*)&particle[i].x, sizeof(particle[i].x));
+            out.write((char*)&particle[i].y, sizeof(particle[i].y));
+            out.write((char*)&particle[i].vx, sizeof(particle[i].vx));
+            out.write((char*)&particle[i].vy, sizeof(particle[i].vy));
+            uint16_t ID;
+            if (!particle[i].color)
+                ID = 2*i;
+            else
+                ID = 2*i+1;
+            out.write((char*)&ID, sizeof(ID));
+        }
+        out.close();
+        LastTimeWritten = Time;
+        nFluxFromLeft = nFluxFromRight = 0;
+    }
 
-        fprintf(fd, "%7.2f\t%ld\t%7.2f\t%7.2f\t\t%ld\t%7.2f\t%7.2f\n", Time, nLeft, VaverageL, FluxFromLeft, nRight, VaverageR, FluxFromRight);
-		fclose(fd);
-		LastTimeWritten = Time;
-		nFluxFromLeft = nFluxFromRight = 0;
-	}
+//    FILE *fd = fopen(FileName.toStdString().c_str(), "a");
+//    if (fd)
+//    {
+//        double FluxFromLeft, FluxFromRight;
+//        if (LastTimeWritten == Time)
+//        {
+//            FluxFromLeft = FluxFromRight = 0;
+//        }
+//        else
+//        {
+//            FluxFromLeft = nFluxFromLeft/(Time-LastTimeWritten);
+//            FluxFromRight = nFluxFromRight/(Time-LastTimeWritten);
+//        }
+
+//        fprintf(fd, "%7.2f\t%ld\t%7.2f\t%7.2f\t\t%ld\t%7.2f\t%7.2f\n", Time, nLeft, VaverageL, FluxFromLeft, nRight, VaverageR, FluxFromRight);
+//        fclose(fd);
+//        LastTimeWritten = Time;
+//        nFluxFromLeft = nFluxFromRight = 0;
+//    }
 }
 
 /**

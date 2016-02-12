@@ -53,7 +53,7 @@ QVariant WorldSettings::getSetting(QString key) {
 
 void WorldSettings::on_m_FileNameButton_released()
 {
-    QString filename = QFileDialog::getSaveFileName(this, tr("Pick a file for dump"), QString(), "*.txt");
+    QString filename = QFileDialog::getSaveFileName(this, tr("Pick a file for dump"), QString(), "*.bin");
     this->ui->m_FileName->setText(filename);
 }
 
