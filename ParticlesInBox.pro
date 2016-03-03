@@ -14,7 +14,8 @@ SOURCES += src/main.cpp \
     src/demonstrationwindow.cpp \
     src/newexperimentwindow.cpp \
     src/clickablelabel.cpp \
-    src/generator.cpp
+    src/generator.cpp \
+    src/particlewidget.cpp
 
 FORMS  += src/ui/DemonstrationWindow.ui src/ui/NewExperimentWindow.ui
 
@@ -22,4 +23,5 @@ HEADERS += \
     src/newexperimentwindow.h \
     src/demonstrationwindow.h \
     src/clickablelabel.h \
-    src/generator.h
+    src/generator.h \
+    src/particlewidget.h

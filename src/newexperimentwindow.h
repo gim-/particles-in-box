@@ -22,6 +22,8 @@ private slots:
 
     void on_labelInputFile_clicked();
 
+    void on_labelClearInputFile_clicked();
+
 private:
     Ui::NewExperimentWindow *ui;
 };

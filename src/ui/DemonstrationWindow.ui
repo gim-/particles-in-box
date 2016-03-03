@@ -122,7 +122,7 @@
     <string>Time elapsed: {time:.5f}s</string>
    </property>
   </widget>
-  <widget class="QOpenGLWidget" name="canvas">
+  <widget class="ParticleWidget" name="canvas">
    <property name="geometry">
     <rect>
      <x>4</x>
@@ -133,6 +133,13 @@
    </property>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ParticleWidget</class>
+   <extends>QOpenGLWidget</extends>
+   <header>src/particlewidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

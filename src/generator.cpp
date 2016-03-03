@@ -177,7 +177,6 @@ double Generator::calcTimeStep() {
 bool Generator::initialDistribution() {
     int i, j;
     bool bTouching;
-    srand(time(NULL));	// запуск генератора случайных чисел
     // сначала в левой половине
     for (i = 0; i < getLeftParticleCount(); i++) {
         do {
