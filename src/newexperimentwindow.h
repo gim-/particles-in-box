@@ -15,6 +15,9 @@ public:
     explicit NewExperimentWindow(QWidget *parent = 0);
     ~NewExperimentWindow();
 
+private slots:
+    void on_buttonRun_released();
+
 private:
     Ui::NewExperimentWindow *ui;
 };
