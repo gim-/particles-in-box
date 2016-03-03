@@ -781,7 +781,7 @@
    <property name="title">
     <string>Or open an existing file</string>
    </property>
-   <widget class="QLabel" name="labelInputFile">
+   <widget class="ClickableLabel" name="labelInputFile">
     <property name="geometry">
      <rect>
       <x>13</x>
@@ -804,7 +804,7 @@ or click to browse</string>
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLabel" name="labelClearInputFile">
+   <widget class="ClickableLabel" name="labelClearInputFile">
     <property name="geometry">
      <rect>
       <x>563</x>
@@ -822,6 +822,13 @@ or click to browse</string>
    </widget>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ClickableLabel</class>
+   <extends>QLabel</extends>
+   <header>src/clickablelabel.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -18,6 +18,10 @@ public:
 private slots:
     void on_buttonRun_released();
 
+    void on_buttonOutputFile_released();
+
+    void on_labelInputFile_clicked();
+
 private:
     Ui::NewExperimentWindow *ui;
 };
