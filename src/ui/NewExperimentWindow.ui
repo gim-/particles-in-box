@@ -206,7 +206,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QSpinBox" name="NLeft">
+      <widget class="QSpinBox" name="nLeft">
        <property name="maximum">
         <number>1000</number>
        </property>
@@ -216,7 +216,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QSpinBox" name="NRight">
+      <widget class="QSpinBox" name="nRight">
        <property name="maximum">
         <number>1000</number>
        </property>
@@ -827,6 +827,9 @@ or click to browse</string>
    <class>ClickableLabel</class>
    <extends>QLabel</extends>
    <header>src/clickablelabel.h</header>
+   <slots>
+    <signal>clicked()</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
