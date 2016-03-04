@@ -6,6 +6,7 @@
 #include <iostream>
 #include <queue>
 #include <cstdio>
+#include <QFileInfo>
 
 using namespace std;
 
@@ -54,6 +55,7 @@ World::World(int nLeftParticles, int nRightParticles, double rParticle, double v
 }
 
 World::World(QString fileName, QObject *parent) : QObject(parent) {
+    this->fileName = fileName.toStdString();
     ifstream in(fileName.toStdString(), ios::binary | ios::in);
     //box
     in.read((char*)&geometry.xRight, sizeof(geometry.xRight));
@@ -552,6 +554,18 @@ void World::simulate() {
 
 void World::startSimulation() {
     simulate();
+}
+
+unsigned short int World::getStateCount() const {
+    QFileInfo fi(QString::fromStdString(fileName));
+    qint64 fileSize = fi.size();
+    qint16 headSize = sizeof(geometry.xRight) + sizeof(geometry.yMax) + sizeof(deltaVTop) +
+            sizeof(deltaVBottom) + sizeof(deltaVSide) +  sizeof(geometry.xCenter) +
+            sizeof(geometry.wThickness) + sizeof(geometry.holePosition) + sizeof(geometry.holeSize) +
+            sizeof(loss) + sizeof(geometry.rParticle) + sizeof(g) +sizeof(nParticles);
+    quint16 stateSize = sizeof(particle[0].x) + sizeof(particle[0].y) +
+            sizeof(particle[0].vX) + sizeof(particle[0].vY) + sizeof(uint16_t);
+    return (fileSize - headSize) / stateSize;
 }
 
 

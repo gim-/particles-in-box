@@ -8,6 +8,7 @@ DemonstrationWindow::DemonstrationWindow(QString simulationFile, QWidget *parent
     ui->setupUi(this);
     mWorld = new World(simulationFile);
     ui->canvas->initializeWorld(*mWorld->getGeometry(), mWorld->getParticles());
+    ui->sliderState->setMaximum(mWorld->getStateCount());
 }
 
 DemonstrationWindow::~DemonstrationWindow() {

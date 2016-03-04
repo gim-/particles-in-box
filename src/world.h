@@ -66,6 +66,8 @@ public:
     int nLeftParticles, nRightParticles;// Реальное число частиц
     int nParticles;
 
+    unsigned short int getStateCount() const;
+
 
 // Protected methods
 protected:
