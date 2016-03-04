@@ -2,12 +2,13 @@
 #define PARTICLEWIDGET_H
 
 #include <QOpenGLWidget>
+#include <QGLWidget>
 #include <GL/glu.h>
 #include "world.h"
 #include <QVector>
 
 
-class ParticleWidget : public QOpenGLWidget {
+class ParticleWidget : public QGLWidget {
         Q_OBJECT
 private:
     SGeometry mBoxGeometry;

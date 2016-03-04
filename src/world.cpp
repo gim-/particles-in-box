@@ -330,19 +330,23 @@ void World::writeParameters() {
         out.write((char*)&partCount, sizeof(partCount));
         out.close();
     }
-    this->headPointerParticles = 12 * sizeof(double) + sizeof(int); // в файл записывается 12 параметров типа double и 1 параметр типа int
 }
 
 void World::readParticlesState(int stateNum) {
     SParticle currParticle;
     uint16_t id;
     ifstream in(fileName, ios::binary | ios::in | ios::app);
+
+    qint16 headSize = sizeof(geometry.xRight) + sizeof(geometry.yMax) + sizeof(deltaVTop) +
+            sizeof(deltaVBottom) + sizeof(deltaVSide) +  sizeof(geometry.xCenter) +
+            sizeof(geometry.wThickness) + sizeof(geometry.holePosition) + sizeof(geometry.holeSize) +
+            sizeof(loss) + sizeof(geometry.rParticle) + sizeof(g) +sizeof(nParticles);
     size_t particleSize = sizeof(currParticle.x) + sizeof(currParticle.y) +
                           sizeof(currParticle.vX) + sizeof(currParticle.vY) + sizeof(id);
-    int pointerPosition = headPointerParticles + stateNum * getParticleCount() * particleSize;
+    int pointerPosition = headSize + stateNum * (getParticleCount() * particleSize + sizeof(time));
     in.seekg(pointerPosition);
+    in.read((char *) &time, sizeof(time));
     for (int i = 0; i < getParticleCount(); i++) {
-        in.read((char *) &time, sizeof(time));
         in.read((char *) &currParticle.x, sizeof(currParticle.x));
         in.read((char *) &currParticle.y, sizeof(currParticle.y));
         in.read((char *) &currParticle.vX, sizeof(currParticle.vX));
@@ -563,8 +567,8 @@ unsigned short int World::getStateCount() const {
             sizeof(deltaVBottom) + sizeof(deltaVSide) +  sizeof(geometry.xCenter) +
             sizeof(geometry.wThickness) + sizeof(geometry.holePosition) + sizeof(geometry.holeSize) +
             sizeof(loss) + sizeof(geometry.rParticle) + sizeof(g) +sizeof(nParticles);
-    quint16 stateSize = sizeof(particle[0].x) + sizeof(particle[0].y) +
-            sizeof(particle[0].vX) + sizeof(particle[0].vY) + sizeof(uint16_t);
+    quint16 stateSize = (sizeof(particle[0].x) + sizeof(particle[0].y) +
+            sizeof(particle[0].vX) + sizeof(particle[0].vY) + sizeof(uint16_t)) * nParticles;
     return (fileSize - headSize) / stateSize;
 }
 

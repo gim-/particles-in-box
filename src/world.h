@@ -102,9 +102,6 @@ protected:
     unsigned short minToSimulate;
     unsigned short frames;
 
-    unsigned short int headPointerParticles;
-    unsigned int tailPointerParticles;
-
     std::string fileName;		// Имя файла с записанной статистикой
     std::vector<double> heightDistrArr;
     std::vector<double> maxwellDistrArr;

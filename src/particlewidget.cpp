@@ -1,6 +1,6 @@
 #include "particlewidget.h"
 
-ParticleWidget::ParticleWidget(QWidget *parent) : QOpenGLWidget(parent) {
+ParticleWidget::ParticleWidget(QWidget *parent) : QGLWidget(parent) {
     initializeGL();
 }
 
@@ -8,17 +8,20 @@ ParticleWidget::ParticleWidget(QWidget *parent) : QOpenGLWidget(parent) {
 void ParticleWidget::setBoxGeometry(const SGeometry &newGeometry) {
     this->mBoxGeometry = newGeometry;
     paintGL();
+    updateGL();
 }
 
 void ParticleWidget::setParticles(const QVector<SParticle> &newParticles) {
     this->mParticles = newParticles;
     paintGL();
+    updateGL();
 }
 
 void ParticleWidget::initializeWorld(SGeometry geometry, QVector<SParticle> particles) {
     this->mBoxGeometry = geometry;
     this->mParticles = particles;
     paintGL();
+    updateGL();
 }
 
 
@@ -46,7 +49,6 @@ void ParticleWidget::paintGL() {
             glColor3ub(255, 0, 0);
         else
             glColor3ub(0, 255, 255);
-
 
         // TODO: use display  lists here for speed
         glBegin(GL_TRIANGLE_FAN);
@@ -76,6 +78,7 @@ void ParticleWidget::paintGL() {
         glVertex2d(pGeometry->wRight, pGeometry->yGapBottom);
         glVertex2d(pGeometry->wRight, 0.0);
     glEnd();
+    doneCurrent();
 }
 
 
