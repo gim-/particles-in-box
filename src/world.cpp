@@ -272,9 +272,12 @@ void World::readParticlesState(int stateNum) {
     int pointerPosition = headPointerParticles + stateNum * getParticleCount() * particleSize;
     in.seekg(pointerPosition);
     for (int i = 0; i < getParticleCount(); i++) {
-        in >> time;
-        in >> currParticle.x >> currParticle.y >> currParticle.vX >> currParticle.vY;
-        in >> id;
+        in.read((char *) &time, sizeof(time));
+        in.read((char *) &currParticle.x, sizeof(currParticle.x));
+        in.read((char *) &currParticle.y, sizeof(currParticle.y));
+        in.read((char *) &currParticle.vX, sizeof(currParticle.vX));
+        in.read((char *) &currParticle.vY, sizeof(currParticle.vY));
+        in.read((char *) &id, sizeof(id));
         if (id & 1) {
             currParticle.color = 1;
         } else {
