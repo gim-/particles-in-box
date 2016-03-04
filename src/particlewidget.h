@@ -3,7 +3,7 @@
 
 #include <QOpenGLWidget>
 #include <GL/glu.h>
-#include "generator.h"
+#include "world.h"
 
 
 class ParticleWidget : public QOpenGLWidget {

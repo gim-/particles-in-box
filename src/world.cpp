@@ -481,6 +481,6 @@ void World::simulate() {
     emit onSimulationFinished();
 }
 
-void Generator::startSimulation() {
+void World::startSimulation() {
     simulate();
 }

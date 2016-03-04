@@ -30,7 +30,7 @@ struct SGeometry {
 };
 
 
-class Generator: public QObject {
+class World: public QObject {
     Q_OBJECT
 public:
     World(int nLeftParticles, int nRightParticles, double rParticle, double vInit, double loss, double width,

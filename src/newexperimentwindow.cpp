@@ -1,6 +1,6 @@
 #include "newexperimentwindow.h"
 #include "ui_NewExperimentWindow.h"
-#include "generator.h"
+#include "world.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QProgressDialog>
@@ -114,17 +114,17 @@ void NewExperimentWindow::on_buttonRun_released() {
                                                                   0, fps * minToSimulate, this);
             progressDialog->show();
 
-            Generator* generator = new Generator(nLeftParticles, nRightParticles, rParticle,
-                                                 vInit, vLoss, boxWidth, boxHeight, barrierX,
-                                                 barrierWidth, holeY, holeHeight, deltaVTop,
-                                                 deltaVBottom, deltaVSide, g, minToSimulate,
-                                                 fps, outputFile.fileName().toStdString());
+            World* generator = new World(nLeftParticles, nRightParticles, rParticle,
+                                         vInit, vLoss, boxWidth, boxHeight, barrierX,
+                                         barrierWidth, holeY, holeHeight, deltaVTop,
+                                         deltaVBottom, deltaVSide, g, minToSimulate,
+                                         fps, outputFile.fileName().toStdString());
             QThread *worker = new QThread(this);
             generator->moveToThread(worker);
-            connect(generator, &Generator::onSimulationProgress, progressDialog, &QProgressDialog::setValue);
-            connect(generator, &Generator::onSimulationFinished, progressDialog, &QProgressDialog::cancel);
-            connect(worker, &QThread::started, generator, &Generator::startSimulation);
-            connect(worker, &QThread::finished, generator, &Generator::deleteLater);
+            connect(generator, &World::onSimulationProgress, progressDialog, &QProgressDialog::setValue);
+            connect(generator, &World::onSimulationFinished, progressDialog, &QProgressDialog::cancel);
+            connect(worker, &QThread::started, generator, &World::startSimulation);
+            connect(worker, &QThread::finished, generator, &World::deleteLater);
             connect(worker, &QThread::finished, worker, &QThread::deleteLater);
             connect(progressDialog, &QProgressDialog::canceled, worker, &QThread::terminate);
 
