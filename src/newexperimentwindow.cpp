@@ -1,6 +1,7 @@
 #include "newexperimentwindow.h"
 #include "ui_NewExperimentWindow.h"
 #include <QFileDialog>
+#include <QMessageBox>
 
 NewExperimentWindow::NewExperimentWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -82,6 +83,20 @@ void NewExperimentWindow::clearInputFile() {
 }
 
 void NewExperimentWindow::on_buttonRun_released() {
+    if (ui->labelInputFile->text.isEmpty()) {
+        QFile outputFile(ui->outputFile->text());
+        if (outputFile.open(QIODevice::WriteOnly)) {
+            outputFile.close();
+            // todo: write to file
+        }
+        else {
+            QMessageBox::critical(this, tr("Error!"), QString("Cannot open file %1").arg(outputFile.fileName()));
+        }
+    }
+    else {
+        // TODO: play from file
+    }
+
 }
 
 void NewExperimentWindow::on_buttonOutputFile_released() {
