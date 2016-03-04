@@ -39,7 +39,7 @@ public:
     Generator(int nLeftParticles, int nRightParticles, double rParticle, double vInit, double loss, double width,
               double height, double barrierX, double barrierWidth, double holeY,
               double holeHeight, double deltaVTop, double deltaVBottom, double deltaVSide, double g,
-              int minToSimulate, double frames, std::string fileName);
+              int minToSimulate, double frames, std::string fileName, QObject* parent);
     ~Generator();
 
 public:
