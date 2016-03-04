@@ -83,7 +83,7 @@ void NewExperimentWindow::clearInputFile() {
 }
 
 void NewExperimentWindow::on_buttonRun_released() {
-    if (ui->labelInputFile->text.isEmpty()) {
+    if (ui->labelInputFile->text().isEmpty()) {
         QFile outputFile(ui->outputFile->text());
         if (outputFile.open(QIODevice::WriteOnly)) {
             outputFile.close();

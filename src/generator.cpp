@@ -426,12 +426,14 @@ void Generator::simulate() {
             timeStep = (currSnap - currTime);
         }
 	    if (currTime <= currSnap && currSnap <= currTime + timeStep) {
+            emit onSimulationStep();
             writeStat();
-            cout << currTime << endl;
             currSnap = snapSeconds.front();
             snapSeconds.pop();
         }
         currTime += timeStep;
         oneTimeStep(timeStep);
     }
+
+    emit onSimulationFinished();
 }

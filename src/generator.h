@@ -33,7 +33,8 @@ struct SGeometry {
     double rParticle;		// Радиус одной частицы  (в метрах)
 };
 
-class Generator {
+class Generator: public QObject {
+    Q_OBJECT
 public:
     Generator(int nLeftParticles, int nRightParticles, double rParticle, double vInit, double loss, double width,
               double height, double barrierX, double barrierWidth, double holeY,
@@ -113,8 +114,8 @@ protected:
         unsigned int rgb;
     } mLeftColor, mRightColor;
 
-public:
-    signals:
-        void updateCurrTime(double currTime);
+signals:
+    void onSimulationFinished();
+    void onSimulationStep();
 };
 #endif //PARTICLE_IN_BOX_GENERATOR_GENERATOR_H
