@@ -1,9 +1,5 @@
-//
-// Created by Mihail Orlov on 13/02/16.
-//
-
-#ifndef PARTICLE_IN_BOX_GENERATOR_GENERATOR_H
-#define PARTICLE_IN_BOX_GENERATOR_GENERATOR_H
+#ifndef PARTICLE_IN_BOX_WORLD_WORLD_H
+#define PARTICLE_IN_BOX_WORLD_WORLD_H
 
 #include <vector>
 #include <string>
@@ -15,7 +11,7 @@ const int nMaxParticles = 12000; //65536;		// Максимальное числ�
 struct SParticle {
     double x,y;		// position
     double vX, vY;	// velocity
-    int color;		// 0 частица родилась слева, 1 - справа
+    unsigned short int color;		// 0 частица родилась слева, 1 - справа
 };
 
 struct SGeometry {
@@ -33,13 +29,13 @@ struct SGeometry {
     double rParticle;		// Радиус одной частицы  (в метрах)
 };
 
-class Generator {
+class World {
 public:
-    Generator(int nLeftParticles, int nRightParticles, double rParticle, double vInit, double loss, double width,
+    World(int nLeftParticles, int nRightParticles, double rParticle, double vInit, double loss, double width,
               double height, double barrierX, double barrierWidth, double holeY,
               double holeHeight, double deltaVTop, double deltaVBottom, double deltaVSide, double g,
               int minToSimulate, double frames, std::string fileName);
-    ~Generator();
+    ~World();
 
 public:
     bool initialDistribution();
@@ -51,7 +47,9 @@ public:
     SGeometry *getGeometry() { return &geometry; }
     unsigned char *getLeftColor() { return mLeftColor.c; }
     unsigned char *getRightColor() { return mRightColor.c; }
+    SParticle* getCopyParticles();
     void simulate();
+    void readParticlesState(int stateNum);
 
 // Public members
 public:
@@ -77,12 +75,13 @@ protected:
     void bounceX(SParticle &p) { p.vX = -p.vX; }
     void bounceY(SParticle &p) { p.vY = -p.vY; }
     void writeStat();
+    void writeParameters();
     bool correctParticleByGeometry(SParticle &p);
     bool oneTimeStep(double);
 
 
 protected:
-    SParticle particle[nMaxParticles];		// Сами частицы
+    SParticle *particle;		// Сами частицы
     SGeometry geometry;
     double vInit;			// Начальная скорость всех частиц (в метрах/сек)
     // Collisions
@@ -96,6 +95,8 @@ protected:
     unsigned short minToSimulate;
     unsigned short frames;
 
+    unsigned short int headPointerParticles;
+    unsigned int tailPointerParticles;
 
     std::string fileName;		// Имя файла с записанной статистикой
     std::vector<double> heightDistrArr;
@@ -117,4 +118,4 @@ public:
     signals:
         void updateCurrTime(double currTime);
 };
-#endif //PARTICLE_IN_BOX_GENERATOR_GENERATOR_H
+#endif //PARTICLE_IN_BOX_WORLD_WORLD_H
