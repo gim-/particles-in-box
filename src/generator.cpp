@@ -444,3 +444,7 @@ void Generator::simulate() {
 
     emit onSimulationFinished();
 }
+
+void Generator::startSimulation() {
+    simulate();
+}

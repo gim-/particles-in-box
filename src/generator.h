@@ -118,5 +118,7 @@ signals:
     void onSimulationFinished();
     void onSimulationStep();
     void onSimulationProgress(int secondsSimulated);
+public slots:
+    void startSimulation();
 };
 #endif //PARTICLE_IN_BOX_GENERATOR_GENERATOR_H

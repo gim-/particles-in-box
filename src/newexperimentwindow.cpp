@@ -109,7 +109,7 @@ void NewExperimentWindow::on_buttonRun_released() {
             double fps = (double)ui->fps->value();
 
 
-            QProgressDialog* progressDialog = new QProgressDialog(tr("Simulating..."),
+            QProgressDialog* progressDialog = new QProgressDialog(tr("Simulating into %1").arg(outputFile.fileName()),
                                                                   tr("Cancel"),
                                                                   0, fps * minToSimulate, this);
             progressDialog->show();
@@ -123,11 +123,14 @@ void NewExperimentWindow::on_buttonRun_released() {
             generator->moveToThread(worker);
             connect(generator, &Generator::onSimulationProgress, progressDialog, &QProgressDialog::setValue);
             connect(generator, &Generator::onSimulationFinished, progressDialog, &QProgressDialog::cancel);
+            connect(worker, &QThread::started, generator, &Generator::startSimulation);
+            connect(worker, &QThread::finished, generator, &Generator::deleteLater);
+            connect(worker, &QThread::finished, worker, &QThread::deleteLater);
             connect(progressDialog, &QProgressDialog::canceled, worker, &QThread::terminate);
 
             this->hide();
 
-            generator->simulate();
+            worker->start();
 
         }
         else {
