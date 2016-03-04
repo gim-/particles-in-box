@@ -13,11 +13,11 @@ TEMPLATE = app
 SOURCES += src/main.cpp \
     src/demonstrationwindow.cpp \
     src/newexperimentwindow.cpp \
-    src/generator.cpp
+    src/world.cpp
 
 FORMS  += src/ui/DemonstrationWindow.ui src/ui/NewExperimentWindow.ui
 
 HEADERS += \
     src/newexperimentwindow.h \
     src/demonstrationwindow.h \
-    src/generator.h
+    src/world.h
