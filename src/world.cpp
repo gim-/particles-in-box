@@ -1,8 +1,4 @@
-//
-// Created by Mihail Orlov on 13/02/16.
-//
-
-#include "generator.h"
+#include "world.h"
 #include <stdlib.h>
 #include <algorithm>
 #include <time.h>
@@ -16,7 +12,7 @@ using namespace std;
 
 const double PI = M_PI;//3.1415926;
 
-Generator::Generator(int nLeftParticles, int nRightParticles, double rParticle, double vInit, double loss, double width,
+World::World(int nLeftParticles, int nRightParticles, double rParticle, double vInit, double loss, double width,
                      double height, double barrierX, double barrierWidth, double holeY,
                      double holeHeight, double deltaVTop, double deltaVBottom, double deltaVSide, double g,
                      int minToSimulate, double frames, string fileName, QObject* parent) : QObject(parent){
@@ -43,6 +39,7 @@ Generator::Generator(int nLeftParticles, int nRightParticles, double rParticle, 
     geometry.yGapBottom = geometry.holePosition - geometry.holeSize/2;
     geometry.particleHoleTop = geometry.yGapTop-geometry.rParticle;
     geometry.particleHoleBottom = geometry.yGapBottom+geometry.rParticle;
+    this->particle = new SParticle[nLeftParticles + nRightParticles];
     this->nLeftParticles = nLeftParticles;
     this->nRightParticles = nRightParticles;
     this->vInit = vInit;
@@ -55,20 +52,34 @@ Generator::Generator(int nLeftParticles, int nRightParticles, double rParticle, 
 
 }
 
-Generator::~Generator() {};
+World::~World() {
+    delete[] particle;
+}
+
+/*
+ * Создание копии массива с частицами
+*/
+SParticle* World::getCopyParticles() {
+    int numParticles = nLeftParticles + nRightParticles;
+    SParticle *copy = new SParticle[numParticles];
+    for (int i = 0; i < numParticles; i++) {
+        copy[i] = particle[i];
+    }
+    return copy;
+}
 
 double getVelocity(const SParticle &p) {
     return sqrt(p.vX*p.vX + p.vY*p.vY);
 }
 
-double Generator::random(double from, double to) {
+double World::random(double from, double to) {
     return (to-from)*rand()/RAND_MAX + from;
 }
 
 /*
  * Вычисляет квадрат расстояния между двумя частицами (между центрами)
 */
-double Generator::distance2(SParticle &p1, SParticle &p2) {
+double World::distance2(SParticle &p1, SParticle &p2) {
     double dx = p1.x - p2.x;
     double dy = p1.y - p2.y;
     return (dx*dx+dy*dy);
@@ -78,7 +89,7 @@ double Generator::distance2(SParticle &p1, SParticle &p2) {
 /**
  * Определяет, сближаются ли частицы
  */
-bool Generator::approaching(SParticle &p1, SParticle &p2) {
+bool World::approaching(SParticle &p1, SParticle &p2) {
     double dVx, dVy;	// Скорости сближения по осям
     if (p1.x < p2.x)
         dVx = p1.vX - p2.vX;
@@ -103,7 +114,7 @@ bool Generator::approaching(SParticle &p1, SParticle &p2) {
 /**
  * Рассчитывает столкновение частиц
  */
-void Generator::collision(SParticle &p1, SParticle &p2) {
+void World::collision(SParticle &p1, SParticle &p2) {
     double factor = sqrt(1.-loss);
     double dx = p1.x-p2.x;
     double dx2 = dx*dx;
@@ -146,7 +157,7 @@ void Generator::collision(SParticle &p1, SParticle &p2) {
 /**
  * Задает случайный вектор скорости (модуль постоянный и равный vInit)
  */
-void Generator::randomVelocity(SParticle &p) {
+void World::randomVelocity(SParticle &p) {
     double angle = random(0, PI*2);			// направление движения частицы - случайный угол 0...2PI
     p.vX = vInit * cos(angle);
     p.vY = vInit * sin(angle);
@@ -158,7 +169,7 @@ void Generator::randomVelocity(SParticle &p) {
   * за этот шаг не проходила расстояние, большее половины своего радиуса (это нужно чтобы избежать
   * пролета частиц сквозь границу ящика за один шаг, а также чтобы столкновения частиц между собой не были пропущены).
  */
-double Generator::calcTimeStep() {
+double World::calcTimeStep() {
     double v, vMax = 0;
     for (int i = 0; i < getParticleCount(); i++) {
         v = getVelocity(particle[i]);
@@ -174,7 +185,7 @@ double Generator::calcTimeStep() {
 }
 
 
-bool Generator::initialDistribution() {
+bool World::initialDistribution() {
     int i, j;
     bool bTouching;
     // сначала в левой половине
@@ -215,7 +226,10 @@ bool Generator::initialDistribution() {
     }
 
     calcTimeStep();
+    return true;
+}
 
+void World::writeParameters() {
     ofstream out(fileName, ios::binary | ios::out);
     if (out.is_open()) {
         //box
@@ -246,13 +260,37 @@ bool Generator::initialDistribution() {
         out.write((char*)&partCount, sizeof(partCount));
         out.close();
     }
-    return true;
+    this->headPointerParticles = 12 * sizeof(double) + sizeof(int); // в файл записывается 12 параметров типа double и 1 параметр типа int
+}
+
+void World::readParticlesState(int stateNum) {
+    SParticle currParticle;
+    uint16_t id;
+    ifstream in(fileName, ios::binary | ios::in | ios::app);
+    size_t particleSize = sizeof(currParticle.x) + sizeof(currParticle.y) +
+                          sizeof(currParticle.vX) + sizeof(currParticle.vY) + sizeof(id);
+    int pointerPosition = headPointerParticles + stateNum * getParticleCount() * particleSize;
+    in.seekg(pointerPosition);
+    for (int i = 0; i < getParticleCount(); i++) {
+        in.read((char *) &time, sizeof(time));
+        in.read((char *) &currParticle.x, sizeof(currParticle.x));
+        in.read((char *) &currParticle.y, sizeof(currParticle.y));
+        in.read((char *) &currParticle.vX, sizeof(currParticle.vX));
+        in.read((char *) &currParticle.vY, sizeof(currParticle.vY));
+        in.read((char *) &id, sizeof(id));
+        if (id & 1) {
+            currParticle.color = 1;
+        } else {
+            currParticle.color = 0;
+        }
+        particle[i] = currParticle;
+    }
 }
 
 /**
  * Записывает накопленную статистику в файл
  */
-void Generator::writeStat() {
+void World::writeStat() {
     ofstream out(fileName, ios::binary | ios::out | ios::app);
     if (out.is_open()) {
         out.write((char *) &time, sizeof(time));
@@ -261,16 +299,14 @@ void Generator::writeStat() {
             out.write((char *) &particle[i].y, sizeof(particle[i].y));
             out.write((char *) &particle[i].vX, sizeof(particle[i].vX));
             out.write((char *) &particle[i].vY, sizeof(particle[i].vY));
-            uint16_t ID;
+            uint16_t id;
             if (!particle[i].color)
-                ID = 2 * i;
+                id = 2 * i;
             else
-                ID = 2 * i + 1;
-            out.write((char *) &ID, sizeof(ID));
+                id = 2 * i + 1;
+            out.write((char *) &id, sizeof(id));
         }
         out.close();
-        lastTimeWritten = time;
-        nFluxFromLeft = nFluxFromRight = 0;
     }
 }
 
@@ -286,7 +322,7 @@ static int compareParticleProc(const void *elem1, const void *elem2) {
         return 1;
 }
 
-void Generator::moveParticle(SParticle &p, double dt) {
+void World::moveParticle(SParticle &p, double dt) {
     bool IsLeftBefore = p.x < geometry.xCenter;
     // По оси Х
     p.x = p.x + p.vX*dt;
@@ -308,7 +344,7 @@ void Generator::moveParticle(SParticle &p, double dt) {
  * с другой частицей или со стенками (в результате чего изменилась скорость хоть одной частицы)
  * или хоть одна частица перелетела из одной половины в другую
  */
-bool Generator::oneTimeStep(double DeltaTime) {
+bool World::oneTimeStep(double DeltaTime) {
     int i, j;
 
     for (i = 0; i < getParticleCount(); i++) {
@@ -333,7 +369,6 @@ bool Generator::oneTimeStep(double DeltaTime) {
     }
 
     time = time+DeltaTime;
-    nTimeSteps = nTimeSteps+1;
     return true;
 }
 
@@ -341,7 +376,7 @@ bool Generator::oneTimeStep(double DeltaTime) {
  * Корректирует движение частицы при столкновении с перегородкой и стенками
  * Возвращает true если частица столкнулась с перегородкой/стенками
  */
-bool Generator::correctParticleByGeometry(SParticle &p) {
+bool World::correctParticleByGeometry(SParticle &p) {
     bool bCorrected = false;
     double xx = p.x;
     double yy = p.y;
@@ -407,7 +442,7 @@ bool Generator::correctParticleByGeometry(SParticle &p) {
     return bCorrected;
 }
 
-void Generator::simulate() {
+void World::simulate() {
     queue<double> snapSeconds;
     unsigned int numSeconds = minToSimulate * 60;
     double currTime = 0;
@@ -415,6 +450,7 @@ void Generator::simulate() {
     unsigned short int framesSimulated = 0;
     unsigned int secondsSimulated = 0;
     initialDistribution();
+    writeParameters();
     writeStat();
     for (int i = 1; i < int(frames * numSeconds) + 2; i++) {
         snapSeconds.push((double)i / frames);
