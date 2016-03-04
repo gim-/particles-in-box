@@ -53,7 +53,7 @@ World::World(int nLeftParticles, int nRightParticles, double rParticle, double v
 }
 
 World::~World() {
-    delete particle;
+    delete[] particle;
 }
 
 /*
