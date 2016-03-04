@@ -1,7 +1,10 @@
 #include "newexperimentwindow.h"
 #include "ui_NewExperimentWindow.h"
+#include "generator.h"
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QProgressDialog>
+#include <QThread>
 
 NewExperimentWindow::NewExperimentWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -83,11 +86,49 @@ void NewExperimentWindow::clearInputFile() {
 }
 
 void NewExperimentWindow::on_buttonRun_released() {
-    if (ui->labelInputFile->text().isEmpty()) {
+    if (mInputFileName.isEmpty() || mInputFileName.isNull()) {
         QFile outputFile(ui->outputFile->text());
         if (outputFile.open(QIODevice::WriteOnly)) {
             outputFile.close();
-            // todo: write to file
+            int nLeftParticles = ui->nLeft->value();
+            int nRightParticles = ui->nRight->value();
+            double rParticle = ui->particleR->value();
+            double vInit = ui->vInit->value();
+            double vLoss = ui->vLoss->value();
+            double boxWidth = ui->boxWidth->value();
+            double boxHeight = ui->boxHeight->value();
+            double barrierX = ui->barrierX->value();
+            double barrierWidth = ui->barrierWidth->value();
+            double holeY = ui->holeY->value();
+            double holeHeight = ui->holeHeight->value();
+            double deltaVTop = ui->deltaVTop->value();
+            double deltaVBottom = ui->deltaVBottom->value();
+            double deltaVSide = ui->deltaVSide->value();
+            double g = ui->g->value();
+            double minToSimulate = (double)ui->simulationTime->value();
+            double fps = (double)ui->fps->value();
+
+
+            QProgressDialog* progressDialog = new QProgressDialog(tr("Simulating..."),
+                                                                  tr("Cancel"),
+                                                                  0, fps * minToSimulate, this);
+            progressDialog->show();
+
+            Generator* generator = new Generator(nLeftParticles, nRightParticles, rParticle,
+                                                 vInit, vLoss, boxWidth, boxHeight, barrierX,
+                                                 barrierWidth, holeY, holeHeight, deltaVTop,
+                                                 deltaVBottom, deltaVSide, g, minToSimulate,
+                                                 fps, outputFile.fileName().toStdString());
+            QThread *worker = new QThread(this);
+            generator->moveToThread(worker);
+            connect(generator, &Generator::onSimulationProgress, progressDialog, &QProgressDialog::setValue);
+            connect(generator, &Generator::onSimulationFinished, progressDialog, &QProgressDialog::cancel);
+            connect(progressDialog, &QProgressDialog::canceled, worker, &QThread::terminate);
+
+            this->hide();
+
+            generator->simulate();
+
         }
         else {
             QMessageBox::critical(this, tr("Error!"), QString("Cannot open file %1").arg(outputFile.fileName()));

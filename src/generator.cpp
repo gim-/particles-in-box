@@ -19,7 +19,7 @@ const double PI = M_PI;//3.1415926;
 Generator::Generator(int nLeftParticles, int nRightParticles, double rParticle, double vInit, double loss, double width,
                      double height, double barrierX, double barrierWidth, double holeY,
                      double holeHeight, double deltaVTop, double deltaVBottom, double deltaVSide, double g,
-                     int minToSimulate, double frames, string fileName, QObject* parent = nullptr) : QObject(parent){
+                     int minToSimulate, double frames, string fileName, QObject* parent) : QObject(parent){
     this->g = g;
     this->loss = loss;
     geometry.rParticle = rParticle;
@@ -410,7 +410,7 @@ bool Generator::correctParticleByGeometry(SParticle &p) {
 void Generator::simulate() {
     queue<double> snapSeconds;
     unsigned int numSeconds = minToSimulate * 60;
-    unsigned int currTime = 0;
+    double currTime = 0;
 
     unsigned short int framesSimulated = 0;
     unsigned int secondsSimulated = 0;
