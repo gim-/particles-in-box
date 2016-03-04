@@ -411,6 +411,9 @@ void Generator::simulate() {
     queue<double> snapSeconds;
     unsigned int numSeconds = minToSimulate * 60;
     unsigned int currTime = 0;
+
+    unsigned short int framesSimulated = 0;
+    unsigned int secondsSimulated = 0;
     initialDistribution();
     writeStat();
     for (int i = 1; i < int(frames * numSeconds) + 2; i++) {
@@ -427,6 +430,10 @@ void Generator::simulate() {
         }
 	    if (currTime <= currSnap && currSnap <= currTime + timeStep) {
             emit onSimulationStep();
+            if (++framesSimulated >= 60) {
+                framesSimulated = 0;
+                emit onSimulationProgress(++secondsSimulated);
+            }
             writeStat();
             currSnap = snapSeconds.front();
             snapSeconds.pop();

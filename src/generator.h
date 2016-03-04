@@ -117,5 +117,6 @@ protected:
 signals:
     void onSimulationFinished();
     void onSimulationStep();
+    void onSimulationProgress(int secondsSimulated);
 };
 #endif //PARTICLE_IN_BOX_GENERATOR_GENERATOR_H
