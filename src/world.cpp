@@ -49,7 +49,76 @@ World::World(int nLeftParticles, int nRightParticles, double rParticle, double v
     this->fileName = fileName;
     this->minToSimulate = minToSimulate;
     this->frames = frames;
+    nParticles = nLeftParticles + nRightParticles;
+    emit onWorldInitialized(geometry, getParticles());
+}
 
+World::World(QString fileName, QObject *parent) : QObject(parent) {
+    ifstream in(fileName.toStdString(), ios::binary | ios::in);
+    //box
+    in.read((char*)&geometry.xRight, sizeof(geometry.xRight));
+    in.read((char*)&geometry.yMax, sizeof(geometry.yMax));
+
+    //Collisions
+    in.read((char*)&deltaVTop, sizeof(deltaVTop));
+    in.read((char*)&deltaVBottom, sizeof(deltaVBottom));
+    in.read((char*)&deltaVSide, sizeof(deltaVSide));
+
+    //membrana
+    in.read((char*)&geometry.xCenter, sizeof(geometry.xCenter)); //x середины перегородки
+    in.read((char*)&geometry.wThickness, sizeof(geometry.wThickness)); //ширина
+    in.read((char*)&geometry.holePosition, sizeof(geometry.holePosition));
+    in.read((char*)&geometry.holeSize, sizeof(geometry.holeSize)); //высота дырки
+
+    //collision2
+    in.read((char*)&loss, sizeof(loss));
+
+    //particles
+    in.read((char*)&geometry.rParticle, sizeof(geometry.rParticle)); //radius
+
+    //other
+    in.read((char*)&g, sizeof(g));
+    in.read((char*)&nParticles, sizeof(nParticles));
+    in.read((char*)&time, sizeof(time));
+
+
+    geometry.yGapTop = geometry.holePosition + geometry.holeSize / 2.0;
+    geometry.yGapBottom = geometry.holePosition - geometry.holeSize / 2.0;
+
+    geometry.xLeft = 0;
+    geometry.particleXLeft = geometry.xLeft + geometry.rParticle;
+    geometry.particleXRight = geometry.xRight - geometry.rParticle;
+    geometry.yMin = 0;
+    geometry.particleYMax = geometry.yMax - geometry.rParticle;
+    geometry.particleYMin = geometry.yMin + geometry.rParticle;
+    geometry.wLeft = geometry.xCenter - geometry.wThickness/2;
+    geometry.wRight = geometry.xCenter + geometry.wThickness/2;
+    geometry.particleWLeft= geometry.wLeft - geometry.rParticle;
+    geometry.particleWRight = geometry.wRight + geometry.rParticle;
+    geometry.yGapTop = geometry.holePosition + geometry.holeSize/2;
+    geometry.yGapBottom = geometry.holePosition - geometry.holeSize/2;
+    geometry.particleHoleTop = geometry.yGapTop-geometry.rParticle;
+    geometry.particleHoleBottom = geometry.yGapBottom+geometry.rParticle;
+
+    particle = new SParticle[nParticles];
+    nLeftParticles = 0;
+    nRightParticles = 0;
+
+    for (unsigned short int i = 0; i < nParticles; i++) {
+        in.read((char *) &particle[i].x, sizeof(particle[i].x));
+        in.read((char *) &particle[i].y, sizeof(particle[i].y));
+        in.read((char *) &particle[i].vX, sizeof(particle[i].vX));
+        in.read((char *) &particle[i].vY, sizeof(particle[i].vY));
+        in.read((char *) &particle[i].color, sizeof(particle[i].color));
+        if (particle[i].color & 1) { // if spawned on right side
+            nRightParticles ++;
+        }
+        else {
+            nLeftParticles++;
+        }
+    }
+    in.close();
+    emit onWorldInitialized(geometry, getParticles());
 }
 
 World::~World() {
@@ -244,8 +313,7 @@ void World::writeParameters() {
         //membrana
         out.write((char*)&geometry.xCenter, sizeof(geometry.xCenter)); //x середины перегородки
         out.write((char*)&geometry.wThickness, sizeof(geometry.wThickness)); //ширина
-        double YCenter = (geometry.yGapTop+geometry.yGapBottom) / 2; //y середины дырки
-        out.write((char*)&YCenter, sizeof(YCenter));
+        out.write((char*)&geometry.holePosition, sizeof(geometry.holePosition));
         out.write((char*)&geometry.holeSize, sizeof(geometry.holeSize)); //высота дырки
 
         //collision2
@@ -285,6 +353,7 @@ void World::readParticlesState(int stateNum) {
         }
         particle[i] = currParticle;
     }
+    emit onStateChanged(getParticles());
 }
 
 /**
@@ -483,4 +552,13 @@ void World::simulate() {
 
 void World::startSimulation() {
     simulate();
+}
+
+
+QVector<SParticle> World::getParticles() const {
+    QVector<SParticle> vec;
+    for (unsigned short int i = 0; i < getParticleCount(); i++) {
+        vec.push_back(particle[i]);
+    }
+    return vec;
 }

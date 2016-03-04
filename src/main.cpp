@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
 
     qRegisterMetaType<SGeometry>("SGeometry");
     qRegisterMetaType<SParticle>("SParticle");
+    qRegisterMetaType<QVector<SParticle> >("QVector<SParticle>");
 
     NewExperimentWindow w;
     w.show();

@@ -1,4 +1,5 @@
 #include "newexperimentwindow.h"
+#include "demonstrationwindow.h"
 #include "ui_NewExperimentWindow.h"
 #include "world.h"
 #include <QFileDialog>
@@ -138,7 +139,9 @@ void NewExperimentWindow::on_buttonRun_released() {
         }
     }
     else {
-        // TODO: play from file
+        DemonstrationWindow* win = new DemonstrationWindow(mInputFileName);
+        win->show();
+        this->close();
     }
 
 }

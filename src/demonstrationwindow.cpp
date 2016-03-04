@@ -1,14 +1,16 @@
 #include "demonstrationwindow.h"
+#include "particlewidget.h"
 #include "ui_DemonstrationWindow.h"
 
-DemonstrationWindow::DemonstrationWindow(QWidget *parent) :
+DemonstrationWindow::DemonstrationWindow(QString simulationFile, QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::DemonstrationWindow)
-{
+    ui(new Ui::DemonstrationWindow) {
     ui->setupUi(this);
+    mWorld = new World(simulationFile);
+    ui->canvas->initializeWorld(*mWorld->getGeometry(), mWorld->getParticles());
 }
 
-DemonstrationWindow::~DemonstrationWindow()
-{
+DemonstrationWindow::~DemonstrationWindow() {
     delete ui;
+    delete mWorld;
 }

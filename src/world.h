@@ -5,6 +5,7 @@
 #include <string>
 #include <math.h>
 #include <QObject>
+#include <QVector>
 
 const int nMaxParticles = 12000; //65536;		// Максимальное число частиц
 
@@ -37,14 +38,15 @@ public:
               double height, double barrierX, double barrierWidth, double holeY,
               double holeHeight, double deltaVTop, double deltaVBottom, double deltaVSide, double g,
               int minToSimulate, double frames, std::string fileName, QObject* parent = 0);
+    World(QString fileName, QObject* parent = nullptr);
     ~World();
 
 public:
     bool initialDistribution();
     double calcTimeStep();
-    int getLeftParticleCount() { return nLeftParticles; }
-    int getRightParticleCount() { return nRightParticles; }
-    int getParticleCount() { return (nLeftParticles+nRightParticles); }
+    int getLeftParticleCount() const { return nLeftParticles; }
+    int getRightParticleCount() const { return nRightParticles; }
+    int getParticleCount() const { return (nLeftParticles+nRightParticles); }
     SParticle *getParticle(int iParticle) { return particle + iParticle; }
     SGeometry *getGeometry() { return &geometry; }
     unsigned char *getLeftColor() { return mLeftColor.c; }
@@ -52,7 +54,7 @@ public:
     SParticle* getCopyParticles();
     void simulate();
     void readParticlesState(int stateNum);
-
+    QVector<SParticle> getParticles() const;
 // Public members
 public:
     double			time;				// Текущее время (в секундах)
@@ -62,6 +64,7 @@ public:
     double			vAverageR;			// Средняя скорость частиц в правой части
     double			vAverageL;			// Средняя скорость частиц в левой части
     int nLeftParticles, nRightParticles;// Реальное число частиц
+    int nParticles;
 
 
 // Protected methods
@@ -116,10 +119,13 @@ protected:
         unsigned int rgb;
     } mLeftColor, mRightColor;
 
+
 signals:
     void onSimulationFinished();
     void onSimulationStep();
     void onSimulationProgress(int secondsSimulated);
+    void onWorldInitialized(SGeometry geometry, QVector<SParticle> particles);
+    void onStateChanged(QVector<SParticle> particles);
 public slots:
     void startSimulation();
 };
