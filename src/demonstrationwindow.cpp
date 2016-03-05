@@ -16,7 +16,9 @@ DemonstrationWindow::DemonstrationWindow(QString simulationFile, QWidget *parent
     ui->plotMaxwell->xAxis->setLabel("Velocity, m/s");
     ui->plotMaxwell->yAxis->setLabel("Particle density");
     mDataMaxwell = new QCPBars(ui->plotMaxwell->xAxis, ui->plotMaxwell->yAxis);
+    mDataMaxwellTheoretical = new QCPCurve(ui->plotMaxwell->xAxis, ui->plotMaxwell->yAxis);
     ui->plotMaxwell->addPlottable(mDataMaxwell);
+    ui->plotMaxwell->addPlottable(mDataMaxwellTheoretical);
 
     ui->plotBoltzmann->xAxis->setLabel("Height, m");
     ui->plotBoltzmann->yAxis->setLabel("Particle density");
@@ -35,6 +37,8 @@ DemonstrationWindow::DemonstrationWindow(QString simulationFile, QWidget *parent
 DemonstrationWindow::~DemonstrationWindow() {
     delete ui;
     delete mWorld;
+    delete mDataBoltzmann;
+    delete mDataMaxwellTheoretical;
     delete mDataMaxwell;
 }
 
@@ -113,6 +117,13 @@ void DemonstrationWindow::updateMaxwellPlot(QVector<SParticle> particles) {
     ui->plotMaxwell->rescaleAxes();
     mDataBoltzmann->setWidth(dV);
     mDataMaxwell->setData(x, y);
+
+    double vProbable = x[y.indexOf(yMax)];
+    double k = 4 / sqrt(M_PI) * pow(1.0 / vProbable, 3.0);
+    for (quint8 i = 0; i < 15; i++) {
+        y[i] = k * pow(x[i], 2.0) * exp(-pow(x[i], 2.0) / pow(vProbable, 2.0));
+    }
+    mDataMaxwellTheoretical->setData(x, y);
     ui->plotMaxwell->replot();
 
 }

@@ -39,6 +39,7 @@ private:
     QTimer* mTimer;
     QCPBars *mDataMaxwell;
     QCPBars *mDataBoltzmann;
+    QCPCurve* mDataMaxwellTheoretical;
     bool mActive;
 
 
