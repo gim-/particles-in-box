@@ -16,6 +16,8 @@ class DemonstrationWindow : public QMainWindow {
 public:
     explicit DemonstrationWindow(QString simulationFile, QWidget *parent = 0);
     ~DemonstrationWindow();
+    void pause();
+    void start();
 
 public slots:
     void onTimerTimeout();
@@ -25,10 +27,13 @@ private slots:
 
     void on_sliderState_valueChanged(int value);
 
+    void on_buttonPlay_released();
+
 private:
     Ui::DemonstrationWindow *ui;
     World* mWorld;
     QTimer* mTimer;
+    bool mActive;
 
 
 

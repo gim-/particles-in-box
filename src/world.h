@@ -51,6 +51,7 @@ public:
     SGeometry *getGeometry() { return &geometry; }
     unsigned char *getLeftColor() { return mLeftColor.c; }
     unsigned char *getRightColor() { return mRightColor.c; }
+    double getTime() const { return time; }
     SParticle* getCopyParticles();
     void simulate();
     void readParticlesState(int stateNum);
