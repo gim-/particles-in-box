@@ -580,3 +580,9 @@ QVector<SParticle> World::getParticles() const {
     }
     return vec;
 }
+
+
+
+double particleVelocity(const SParticle& particle) {
+    return sqrt(particle.vX * particle.vX + particle.vY * particle.vY);
+}

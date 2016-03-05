@@ -3,6 +3,7 @@
 #include "ui_DemonstrationWindow.h"
 #include <QTimer>
 #include "qcustomplot/qcustomplot.h"
+#include <limits>
 
 DemonstrationWindow::DemonstrationWindow(QString simulationFile, QWidget *parent) :
     QMainWindow(parent),
@@ -11,6 +12,18 @@ DemonstrationWindow::DemonstrationWindow(QString simulationFile, QWidget *parent
     mWorld = new World(simulationFile);
     ui->canvas->initializeWorld(*mWorld->getGeometry(), mWorld->getParticles());
     ui->sliderState->setMaximum(mWorld->getStateCount());
+
+    ui->plotMaxwell->xAxis->setLabel("Velocity, m/s");
+    ui->plotMaxwell->yAxis->setLabel("Particle density");
+    mDataMaxwell = new QCPBars(ui->plotMaxwell->xAxis, ui->plotMaxwell->yAxis);
+    ui->plotMaxwell->addPlottable(mDataMaxwell);
+
+    ui->plotBoltzmann->xAxis->setLabel("Height, m");
+    ui->plotBoltzmann->yAxis->setLabel("Particle density");
+    mDataBoltzmann = new QCPBars(ui->plotBoltzmann->xAxis, ui->plotBoltzmann->yAxis);
+    ui->plotBoltzmann->addPlottable(mDataBoltzmann);
+
+
     mTimer = new QTimer(this);
     mActive = true;
     connect(mTimer, &QTimer::timeout, this, &DemonstrationWindow::onTimerTimeout);
@@ -22,6 +35,71 @@ DemonstrationWindow::DemonstrationWindow(QString simulationFile, QWidget *parent
 DemonstrationWindow::~DemonstrationWindow() {
     delete ui;
     delete mWorld;
+    delete mDataMaxwell;
+}
+
+void DemonstrationWindow::updateBoltzmannPlot(QVector<SParticle> particles) {
+    QVector<double> x(15), y(15);
+    double yMin = std::numeric_limits<double>::max();
+    double yMax = std::numeric_limits<double>::min();
+    foreach (SParticle particle, particles) {
+        yMin = qMin(yMin, particle.y);
+        yMax = qMax(yMax, particle.y);
+    }
+    double dY = yMax / 15.0;
+    for (quint8 i = 0; i < 15; i++) {
+        x[i] = dY * (i + 1);
+    }
+
+    foreach (SParticle particle, particles) {
+        quint8 chunk = int((particle.y - dY / 2.0) / dY);
+        y[chunk]++;
+    }
+
+
+    for (quint8 i = 0; i < 15; i++) {
+        y[i] = y[i] / (double)particles.size();
+    }
+
+    ui->plotBoltzmann->xAxis->setRange(0.0, ((int)(yMax / 5.0) + 1) * 5.0);
+    ui->plotBoltzmann->yAxis->setRange(0.0, 1.0);
+    mDataBoltzmann->setWidth(dY);
+    mDataBoltzmann->setData(x, y);
+    ui->plotBoltzmann->replot();
+}
+
+void DemonstrationWindow::updateMaxwellPlot(QVector<SParticle> particles) {
+    QVector<double> x(15), y(15);
+    double vMin = std::numeric_limits<double>::max();
+    double vMax = std::numeric_limits<double>::min();
+    foreach (SParticle particle, particles) {
+        double velocity = particleVelocity(particle);
+        vMin = qMin(vMin, velocity);
+        vMax = qMax(vMax, velocity);
+    }
+    double dV = vMax / 15.0;
+    for (quint8 i = 0; i < 15; i++) {
+        x[i] = dV * (i + 1);
+    }
+
+    foreach (SParticle particle, particles) {
+        double velocity = particleVelocity(particle);
+        quint8 chunk = int((velocity - dV / 2.0) / dV);
+        y[chunk]++;
+    }
+
+
+    for (quint8 i = 0; i < 15; i++) {
+        y[i] = y[i] / (double)particles.size();
+    }
+
+    ui->plotMaxwell->xAxis->setRange(0.0, ((int)(vMax / 5.0) + 1) * 5.0);
+    ui->plotMaxwell->yAxis->setRange(0.0, 1.0);
+    ui->plotMaxwell->rescaleAxes();
+    mDataBoltzmann->setWidth(dV);
+    mDataMaxwell->setData(x, y);
+    ui->plotMaxwell->replot();
+
 }
 
 void DemonstrationWindow::pause() {
@@ -49,6 +127,9 @@ void DemonstrationWindow::on_comboFps_valueChanged(int value) {
 void DemonstrationWindow::on_sliderState_valueChanged(int value){
     mWorld->readParticlesState(value);
     ui->labelTime->setText(tr("Time elapsed: %1s").arg(mWorld->getTime(), 0, 'g', 5));
+    QVector<SParticle> particles = mWorld->getParticles();
+    updateBoltzmannPlot(particles);
+    updateMaxwellPlot(particles);
 }
 
 void DemonstrationWindow::on_buttonPlay_released() {

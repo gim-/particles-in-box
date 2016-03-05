@@ -30,6 +30,8 @@ struct SGeometry {
     double rParticle;		// Радиус одной частицы  (в метрах)
 };
 
+double particleVelocity(const SParticle& particle);
+
 
 class World: public QObject {
     Q_OBJECT

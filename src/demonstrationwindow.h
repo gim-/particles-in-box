@@ -20,6 +20,9 @@ public:
     void pause();
     void start();
 
+    void updateMaxwellPlot(QVector<SParticle> particles);
+    void updateBoltzmannPlot(QVector<SParticle> particles);
+
 public slots:
     void onTimerTimeout();
 
@@ -34,6 +37,8 @@ private:
     Ui::DemonstrationWindow *ui;
     World* mWorld;
     QTimer* mTimer;
+    QCPBars *mDataMaxwell;
+    QCPBars *mDataBoltzmann;
     bool mActive;
 
 
