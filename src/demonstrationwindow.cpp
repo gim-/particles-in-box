@@ -40,19 +40,19 @@ DemonstrationWindow::~DemonstrationWindow() {
 
 void DemonstrationWindow::updateBoltzmannPlot(QVector<SParticle> particles) {
     QVector<double> x(15), y(15);
-    double yMin = std::numeric_limits<double>::max();
-    double yMax = std::numeric_limits<double>::min();
+    double hMin = std::numeric_limits<double>::max();
+    double hMax = std::numeric_limits<double>::min();
     foreach (SParticle particle, particles) {
-        yMin = qMin(yMin, particle.y);
-        yMax = qMax(yMax, particle.y);
+        hMin = qMin(hMin, particle.y);
+        hMax = qMax(hMax, particle.y);
     }
-    double dY = yMax / 15.0;
+    double dH = hMax / 15.0;
     for (quint8 i = 0; i < 15; i++) {
-        x[i] = dY * (i + 1);
+        x[i] = dH * (i + 1);
     }
 
     foreach (SParticle particle, particles) {
-        quint8 chunk = int((particle.y - dY / 2.0) / dY);
+        quint8 chunk = int((particle.y - dH / 2.0) / dH);
         y[chunk]++;
     }
 
@@ -61,9 +61,9 @@ void DemonstrationWindow::updateBoltzmannPlot(QVector<SParticle> particles) {
         y[i] = y[i] / (double)particles.size();
     }
 
-    ui->plotBoltzmann->xAxis->setRange(0.0, ((int)(yMax / 5.0) + 1) * 5.0);
+    ui->plotBoltzmann->xAxis->setRange(0.0, ((int)(hMax / 5.0) + 1) * 5.0);
     ui->plotBoltzmann->yAxis->setRange(0.0, 1.0);
-    mDataBoltzmann->setWidth(dY);
+    mDataBoltzmann->setWidth(dH);
     mDataBoltzmann->setData(x, y);
     ui->plotBoltzmann->replot();
 }
