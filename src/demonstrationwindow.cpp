@@ -42,6 +42,8 @@ void DemonstrationWindow::updateBoltzmannPlot(QVector<SParticle> particles) {
     QVector<double> x(15), y(15);
     double hMin = std::numeric_limits<double>::max();
     double hMax = std::numeric_limits<double>::min();
+    double yMin = std::numeric_limits<double>::max();
+    double yMax = std::numeric_limits<double>::min();
     foreach (SParticle particle, particles) {
         hMin = qMin(hMin, particle.y);
         hMax = qMax(hMax, particle.y);
@@ -61,6 +63,12 @@ void DemonstrationWindow::updateBoltzmannPlot(QVector<SParticle> particles) {
         y[i] = y[i] / (double)particles.size();
     }
 
+    foreach (double val, y) {
+        yMin = qMin(yMin, val);
+        yMax = qMax(yMax, val);
+    }
+
+
     ui->plotBoltzmann->xAxis->setRange(0.0, ((int)(hMax / 5.0) + 1) * 5.0);
     ui->plotBoltzmann->yAxis->setRange(0.0, 1.0);
     mDataBoltzmann->setWidth(dH);
@@ -72,6 +80,8 @@ void DemonstrationWindow::updateMaxwellPlot(QVector<SParticle> particles) {
     QVector<double> x(15), y(15);
     double vMin = std::numeric_limits<double>::max();
     double vMax = std::numeric_limits<double>::min();
+    double yMin = std::numeric_limits<double>::max();
+    double yMax = std::numeric_limits<double>::min();
     foreach (SParticle particle, particles) {
         double velocity = particleVelocity(particle);
         vMin = qMin(vMin, velocity);
@@ -91,6 +101,11 @@ void DemonstrationWindow::updateMaxwellPlot(QVector<SParticle> particles) {
 
     for (quint8 i = 0; i < 15; i++) {
         y[i] = y[i] / (double)particles.size();
+    }
+
+    foreach (double val, y) {
+        yMin = qMin(yMin, val);
+        yMax = qMax(yMax, val);
     }
 
     ui->plotMaxwell->xAxis->setRange(0.0, ((int)(vMax / 5.0) + 1) * 5.0);
