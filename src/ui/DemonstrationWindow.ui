@@ -89,26 +89,6 @@
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
-  <widget class="QGraphicsView" name="plotMaxwell">
-   <property name="geometry">
-    <rect>
-     <x>708</x>
-     <y>4</y>
-     <width>255</width>
-     <height>255</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QGraphicsView" name="plotBoltzmann">
-   <property name="geometry">
-    <rect>
-     <x>708</x>
-     <y>265</y>
-     <width>255</width>
-     <height>255</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QLabel" name="labelTime">
    <property name="geometry">
     <rect>
@@ -132,12 +112,38 @@
     </rect>
    </property>
   </widget>
+  <widget class="QCustomPlot" name="plotMaxwell" native="true">
+   <property name="geometry">
+    <rect>
+     <x>708</x>
+     <y>4</y>
+     <width>255</width>
+     <height>255</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QCustomPlot" name="plotBoltzmann" native="true">
+   <property name="geometry">
+    <rect>
+     <x>708</x>
+     <y>265</y>
+     <width>255</width>
+     <height>255</height>
+    </rect>
+   </property>
+  </widget>
  </widget>
  <customwidgets>
   <customwidget>
    <class>ParticleWidget</class>
    <extends>QOpenGLWidget</extends>
    <header>src/particlewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header>src/qcustomplot/qcustomplot.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

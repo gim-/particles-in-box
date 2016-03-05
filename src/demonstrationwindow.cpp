@@ -2,6 +2,7 @@
 #include "particlewidget.h"
 #include "ui_DemonstrationWindow.h"
 #include <QTimer>
+#include "qcustomplot/qcustomplot.h"
 
 DemonstrationWindow::DemonstrationWindow(QString simulationFile, QWidget *parent) :
     QMainWindow(parent),

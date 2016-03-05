@@ -5,6 +5,7 @@
 #include "world.h"
 #include <QVector>
 #include <QString>
+#include "qcustomplot/qcustomplot.h"
 
 namespace Ui {
 class DemonstrationWindow;
