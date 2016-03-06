@@ -8,7 +8,7 @@
 #include <QVector>
 
 
-class ParticleWidget : public QGLWidget {
+class ParticleWidget : public QOpenGLWidget {
         Q_OBJECT
 private:
     SGeometry mBoxGeometry;

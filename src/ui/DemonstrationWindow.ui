@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>969</width>
-    <height>540</height>
+    <width>1200</width>
+    <height>655</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>708</width>
-    <height>540</height>
+    <width>1200</width>
+    <height>655</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>969</width>
-    <height>540</height>
+    <width>1200</width>
+    <height>655</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -28,9 +28,9 @@
   <widget class="QSlider" name="sliderState">
    <property name="geometry">
     <rect>
-     <x>4</x>
-     <y>454</y>
-     <width>700</width>
+     <x>5</x>
+     <y>565</y>
+     <width>870</width>
      <height>20</height>
     </rect>
    </property>
@@ -41,8 +41,8 @@
   <widget class="QPushButton" name="buttonPlay">
    <property name="geometry">
     <rect>
-     <x>336</x>
-     <y>490</y>
+     <x>419</x>
+     <y>600</y>
      <width>32</width>
      <height>32</height>
     </rect>
@@ -54,8 +54,8 @@
   <widget class="QSpinBox" name="comboFps">
    <property name="geometry">
     <rect>
-     <x>656</x>
-     <y>490</y>
+     <x>822</x>
+     <y>600</y>
      <width>48</width>
      <height>32</height>
     </rect>
@@ -76,9 +76,9 @@
   <widget class="QLabel" name="labelFps">
    <property name="geometry">
     <rect>
-     <x>502</x>
-     <y>490</y>
-     <width>146</width>
+     <x>675</x>
+     <y>600</y>
+     <width>143</width>
      <height>32</height>
     </rect>
    </property>
@@ -92,9 +92,9 @@
   <widget class="QLabel" name="labelTime">
    <property name="geometry">
     <rect>
-     <x>4</x>
-     <y>490</y>
-     <width>221</width>
+     <x>5</x>
+     <y>600</y>
+     <width>220</width>
      <height>32</height>
     </rect>
    </property>
@@ -105,30 +105,30 @@
   <widget class="ParticleWidget" name="canvas">
    <property name="geometry">
     <rect>
-     <x>4</x>
-     <y>4</y>
-     <width>700</width>
-     <height>450</height>
+     <x>5</x>
+     <y>5</y>
+     <width>870</width>
+     <height>550</height>
     </rect>
    </property>
   </widget>
   <widget class="QCustomPlot" name="plotMaxwell" native="true">
    <property name="geometry">
     <rect>
-     <x>708</x>
-     <y>4</y>
-     <width>255</width>
-     <height>255</height>
+     <x>875</x>
+     <y>5</y>
+     <width>320</width>
+     <height>320</height>
     </rect>
    </property>
   </widget>
   <widget class="QCustomPlot" name="plotBoltzmann" native="true">
    <property name="geometry">
     <rect>
-     <x>708</x>
-     <y>265</y>
-     <width>255</width>
-     <height>255</height>
+     <x>875</x>
+     <y>330</y>
+     <width>320</width>
+     <height>320</height>
     </rect>
    </property>
   </widget>
