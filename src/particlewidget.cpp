@@ -4,21 +4,27 @@ ParticleWidget::ParticleWidget(QWidget *parent) : QOpenGLWidget(parent) {
     initializeGL();
 }
 
+ParticleWidget::~ParticleWidget() {
+}
+
 
 void ParticleWidget::setBoxGeometry(const SGeometry &newGeometry) {
     this->mBoxGeometry = newGeometry;
     paintGL();
+    update();
 }
 
 void ParticleWidget::setParticles(const QVector<SParticle> &newParticles) {
     this->mParticles = newParticles;
     paintGL();
+    update();
 }
 
 void ParticleWidget::initializeWorld(SGeometry geometry, QVector<SParticle> particles) {
     this->mBoxGeometry = geometry;
     this->mParticles = particles;
     paintGL();
+    update();
 }
 
 
