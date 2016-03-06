@@ -20,10 +20,16 @@ DemonstrationWindow::DemonstrationWindow(QString simulationFile, QWidget *parent
     ui->plotMaxwell->addPlottable(mDataMaxwell);
     ui->plotMaxwell->addPlottable(mDataMaxwellTheoretical);
 
+    ui->plotMaxwell->xAxis->grid()->setPen(QPen(QColor(0, 0, 0, 0)));
+    ui->plotMaxwell->yAxis->grid()->setPen(QPen(QColor(0, 0, 0, 0)));
+
     ui->plotBoltzmann->xAxis->setLabel("Height, m");
     ui->plotBoltzmann->yAxis->setLabel("Particle density");
     mDataBoltzmann = new QCPBars(ui->plotBoltzmann->xAxis, ui->plotBoltzmann->yAxis);
     ui->plotBoltzmann->addPlottable(mDataBoltzmann);
+
+    ui->plotBoltzmann->xAxis->grid()->setPen(QPen(QColor(0, 0, 0, 0)));
+    ui->plotBoltzmann->yAxis->grid()->setPen(QPen(QColor(0, 0, 0, 0)));
 
 
     mTimer = new QTimer(this);
@@ -72,11 +78,9 @@ void DemonstrationWindow::updateBoltzmannPlot(QVector<SParticle> particles) {
         yMax = qMax(yMax, val);
     }
 
-
-    ui->plotBoltzmann->xAxis->setRange(0.0, ((int)(hMax / 5.0) + 1) * 5.0);
-    ui->plotBoltzmann->yAxis->setRange(0.0, 1.0);
     mDataBoltzmann->setWidth(dH);
     mDataBoltzmann->setData(x, y);
+    ui->plotBoltzmann->rescaleAxes();
     ui->plotBoltzmann->replot();
 }
 
@@ -112,9 +116,6 @@ void DemonstrationWindow::updateMaxwellPlot(QVector<SParticle> particles) {
         yMax = qMax(yMax, val);
     }
 
-    ui->plotMaxwell->xAxis->setRange(0.0, ((int)(vMax / 5.0) + 1) * 5.0);
-    ui->plotMaxwell->yAxis->setRange(0.0, 1.0);
-    ui->plotMaxwell->rescaleAxes();
     mDataMaxwell->setWidth(dV);
     mDataMaxwell->setData(x, y);
 
@@ -124,6 +125,7 @@ void DemonstrationWindow::updateMaxwellPlot(QVector<SParticle> particles) {
         y[i] = k * pow(x[i], 2.0) * exp(-pow(x[i], 2.0) / pow(vProbable, 2.0));
     }
     mDataMaxwellTheoretical->setData(x, y);
+    ui->plotMaxwell->rescaleAxes();
     ui->plotMaxwell->replot();
 
 }
