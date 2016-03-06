@@ -115,7 +115,7 @@ void DemonstrationWindow::updateMaxwellPlot(QVector<SParticle> particles) {
     ui->plotMaxwell->xAxis->setRange(0.0, ((int)(vMax / 5.0) + 1) * 5.0);
     ui->plotMaxwell->yAxis->setRange(0.0, 1.0);
     ui->plotMaxwell->rescaleAxes();
-    mDataBoltzmann->setWidth(dV);
+    mDataMaxwell->setWidth(dV);
     mDataMaxwell->setData(x, y);
 
     double vProbable = x[y.indexOf(yMax)];
