@@ -18,28 +18,21 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
-#include "mainwindow.h"
-#include "worldsettings.h"
-#include "World.h"
+#include "newexperimentwindow.h"
+#include "world.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+
     qRegisterMetaType<SGeometry>("SGeometry");
-    qRegisterMetaType<QVector<int> >("QVector<int>");
+    qRegisterMetaType<SParticle>("SParticle");
+    qRegisterMetaType<QVector<SParticle> >("QVector<SParticle>");
 
-    MainWindow w;
-
-    WorldSettings settings;
-    settings.show();
-
-    CWorld world;
-
-    QObject::connect(&settings, SIGNAL(submitSettings()), &world, SLOT(onWorldInitializationRequested()));
-    QObject::connect(&world, SIGNAL(onWorldInitialized()), &w, SLOT(onWorldInitialized()));
-    QObject::connect(&a, SIGNAL(lastWindowClosed()), &world, SLOT(onApplicationTerminate()));
+    NewExperimentWindow w;
+    w.show();
 
     return a.exec();
 }
