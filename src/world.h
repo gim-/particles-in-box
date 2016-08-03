@@ -9,6 +9,26 @@
 
 const int nMaxParticles = 12000; //65536;		// Максимальное число частиц
 
+struct UiParams {
+    int nLeftParticles;
+    int nRightParticles;
+    double rParticle;
+    double vInit;
+    double vLoss;
+    double boxWidth;
+    double boxHeight;
+    double barrierX;
+    double barrierWidth;
+    double holeY;
+    double holeHeight;
+    double deltaVTop;
+    double deltaVBottom;
+    double deltaVSide;
+    double g;
+    double minToSimulate;
+    double fps;
+};
+
 struct SParticle {
     double x,y;		// position
     double vX, vY;	// velocity
@@ -39,7 +59,7 @@ public:
     World(int nLeftParticles, int nRightParticles, double rParticle, double vInit, double loss, double width,
               double height, double barrierX, double barrierWidth, double holeY,
               double holeHeight, double deltaVTop, double deltaVBottom, double deltaVSide, double g,
-              int minToSimulate, double frames, std::string fileName, QObject* parent = 0);
+              int minToSimulate, double frames, QString fileName, UiParams params, QObject* parent = 0);
     World(QString fileName, QObject* parent = nullptr);
     ~World();
 
@@ -58,6 +78,7 @@ public:
     void simulate();
     void readParticlesState(int stateNum);
     QVector<SParticle> getParticles() const;
+    QString getFileName() { return fileName; }
 // Public members
 public:
     double			time;				// Текущее время (в секундах)
@@ -93,6 +114,7 @@ protected:
 protected:
     SParticle *particle;		// Сами частицы
     SGeometry geometry;
+    UiParams params;
     double vInit;			// Начальная скорость всех частиц (в метрах/сек)
     // Collisions
     double deltaVTop;		// Добавок скорости, который получает частица, ударяясь о верхнюю стенку
@@ -105,7 +127,7 @@ protected:
     unsigned short minToSimulate;
     unsigned short frames;
 
-    std::string fileName;		// Имя файла с записанной статистикой
+    QString fileName;		// Имя файла с записанной статистикой
     std::vector<double> heightDistrArr;
     std::vector<double> maxwellDistrArr;
     std::vector<double> particleDistrArr;

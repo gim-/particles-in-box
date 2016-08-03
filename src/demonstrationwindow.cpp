@@ -10,6 +10,7 @@ DemonstrationWindow::DemonstrationWindow(QString simulationFile, QWidget *parent
     ui(new Ui::DemonstrationWindow) {
     ui->setupUi(this);
     mWorld = new World(simulationFile);
+
     ui->canvas->initializeWorld(*mWorld->getGeometry(), mWorld->getParticles());
     ui->sliderState->setMaximum(mWorld->getStateCount());
 
@@ -31,7 +32,6 @@ DemonstrationWindow::DemonstrationWindow(QString simulationFile, QWidget *parent
     ui->plotBoltzmann->xAxis->grid()->setPen(QPen(QColor(0, 0, 0, 0)));
     ui->plotBoltzmann->yAxis->grid()->setPen(QPen(QColor(0, 0, 0, 0)));
 
-
     mTimer = new QTimer(this);
     mActive = true;
     connect(mTimer, &QTimer::timeout, this, &DemonstrationWindow::onTimerTimeout);
@@ -48,8 +48,8 @@ DemonstrationWindow::~DemonstrationWindow() {
     delete mDataMaxwell;
 }
 
-void DemonstrationWindow::updateBoltzmannPlot(QVector<SParticle> particles) {
-    QVector<double> x(15), y(15);
+void DemonstrationWindow::updateBoltzmannPlot(QVector<SParticle> particles, int numBins) {
+    QVector<double> x(numBins), y(numBins);
     double hMin = std::numeric_limits<double>::max();
     double hMax = std::numeric_limits<double>::min();
     double yMin = std::numeric_limits<double>::max();
@@ -58,8 +58,8 @@ void DemonstrationWindow::updateBoltzmannPlot(QVector<SParticle> particles) {
         hMin = qMin(hMin, particle.y);
         hMax = qMax(hMax, particle.y);
     }
-    double dH = hMax / 15.0;
-    for (quint8 i = 0; i < 15; i++) {
+    double dH = hMax / numBins;
+    for (quint8 i = 0; i < numBins; i++) {
         x[i] = dH * (i + 1);
     }
 
@@ -69,7 +69,7 @@ void DemonstrationWindow::updateBoltzmannPlot(QVector<SParticle> particles) {
     }
 
 
-    for (quint8 i = 0; i < 15; i++) {
+    for (quint8 i = 0; i < numBins; i++) {
         y[i] = y[i] / (double)particles.size();
     }
 
@@ -84,8 +84,8 @@ void DemonstrationWindow::updateBoltzmannPlot(QVector<SParticle> particles) {
     ui->plotBoltzmann->replot();
 }
 
-void DemonstrationWindow::updateMaxwellPlot(QVector<SParticle> particles) {
-    QVector<double> x(15), y(15);
+void DemonstrationWindow::updateMaxwellPlot(QVector<SParticle> particles, int numBins) {
+    QVector<double> x(numBins), y(numBins);
     double vMin = std::numeric_limits<double>::max();
     double vMax = std::numeric_limits<double>::min();
     double yMin = std::numeric_limits<double>::max();
@@ -95,8 +95,8 @@ void DemonstrationWindow::updateMaxwellPlot(QVector<SParticle> particles) {
         vMin = qMin(vMin, velocity);
         vMax = qMax(vMax, velocity);
     }
-    double dV = vMax / 15.0;
-    for (quint8 i = 0; i < 15; i++) {
+    double dV = vMax / numBins;
+    for (quint8 i = 0; i < numBins; i++) {
         x[i] = dV * (i + 1);
     }
 
@@ -107,7 +107,7 @@ void DemonstrationWindow::updateMaxwellPlot(QVector<SParticle> particles) {
     }
 
 
-    for (quint8 i = 0; i < 15; i++) {
+    for (quint8 i = 0; i < numBins; i++) {
         y[i] = y[i] / (double)particles.size();
     }
 
@@ -121,7 +121,7 @@ void DemonstrationWindow::updateMaxwellPlot(QVector<SParticle> particles) {
 
     double vProbable = x[y.indexOf(yMax)];
     double k = 4 / sqrt(M_PI) * pow(1.0 / vProbable, 3.0);
-    for (quint8 i = 0; i < 15; i++) {
+    for (quint8 i = 0; i < numBins; i++) {
         y[i] = k * pow(x[i], 2.0) * exp(-pow(x[i], 2.0) / pow(vProbable, 2.0));
     }
     mDataMaxwellTheoretical->setData(x, y);
@@ -156,8 +156,10 @@ void DemonstrationWindow::on_sliderState_valueChanged(int value){
     mWorld->readParticlesState(value);
     ui->labelTime->setText(tr("Time elapsed: %1s").arg(mWorld->getTime(), 0, 'g', 5));
     QVector<SParticle> particles = mWorld->getParticles();
-    updateBoltzmannPlot(particles);
-    updateMaxwellPlot(particles);
+    if (particles.size() != 0) {
+        updateBoltzmannPlot(particles, ui->boltzmannNumBins->value());
+        updateMaxwellPlot(particles, ui->maxwellNumBins->value());
+    }
 }
 
 void DemonstrationWindow::on_buttonPlay_released() {
@@ -167,5 +169,33 @@ void DemonstrationWindow::on_buttonPlay_released() {
     else {
         start();
     }
+}
 
+
+void DemonstrationWindow::on_buttonExportMaxwell_released()
+{
+    QString directoryScreenshots = "Screenshots";
+    QFileInfo fi(mWorld->getFileName());
+    QDir dir(fi.absolutePath() + "/" + directoryScreenshots);
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
+    QString pngName = fi.baseName() + "_maxwell_" + QString::number(mWorld->getTime()) + ".png";
+    ui->plotMaxwell->savePng(dir.absolutePath() + "/" + pngName,
+                             ui->maxwellWidth->value(),
+                             ui->maxwellHeight->value());
+}
+
+void DemonstrationWindow::on_buttonExportBoltzmann_released()
+{
+    QString directoryScreenshots = "Screenshots";
+    QFileInfo fi(mWorld->getFileName());
+    QDir dir(fi.absolutePath() + "/" + directoryScreenshots);
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
+    QString pngName = fi.baseName() + "_boltzmann_" + QString::number(mWorld->getTime()) + ".png";
+    ui->plotBoltzmann->savePng(dir.absolutePath() + "/" + pngName,
+                             ui->boltzmannWidth->value(),
+                             ui->boltzmannHeight->value());
 }
