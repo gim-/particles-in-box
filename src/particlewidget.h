@@ -15,6 +15,7 @@ private:
     QVector<SParticle> mParticles;
 public:
     ParticleWidget(QWidget *parent = 0);
+    ~ParticleWidget();
     void clearGL();
     void initializeWorld(SGeometry geometry, QVector<SParticle> particles);
 

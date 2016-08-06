@@ -27,6 +27,8 @@ private slots:
     void on_labelInputFile_clicked();
     void on_labelClearInputFile_clicked();
 
+    void onSimulationComplete();
+
 private:
     Ui::NewExperimentWindow *ui;
     QString mInputFileName;

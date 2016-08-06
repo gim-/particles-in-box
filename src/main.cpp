@@ -26,7 +26,6 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-
     qRegisterMetaType<SGeometry>("SGeometry");
     qRegisterMetaType<SParticle>("SParticle");
     qRegisterMetaType<QVector<SParticle> >("QVector<SParticle>");

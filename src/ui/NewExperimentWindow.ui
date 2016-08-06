@@ -784,8 +784,8 @@
    <widget class="ClickableLabel" name="labelInputFile">
     <property name="geometry">
      <rect>
-      <x>13</x>
-      <y>27</y>
+      <x>0</x>
+      <y>30</y>
       <width>601</width>
       <height>101</height>
      </rect>

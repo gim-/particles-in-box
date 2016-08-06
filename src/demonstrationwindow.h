@@ -20,8 +20,8 @@ public:
     void pause();
     void start();
 
-    void updateMaxwellPlot(QVector<SParticle> particles);
-    void updateBoltzmannPlot(QVector<SParticle> particles);
+    void updateMaxwellPlot(QVector<SParticle> particles, int numBins);
+    void updateBoltzmannPlot(QVector<SParticle> particles, int numBins);
 
 public slots:
     void onTimerTimeout();
@@ -32,6 +32,10 @@ private slots:
     void on_sliderState_valueChanged(int value);
 
     void on_buttonPlay_released();
+
+    void on_buttonExportMaxwell_released();
+
+    void on_buttonExportBoltzmann_released();
 
 private:
     Ui::DemonstrationWindow *ui;

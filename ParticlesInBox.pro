@@ -10,6 +10,8 @@ CONFIG += C++11
 TARGET = ParticlesInBox
 TEMPLATE = app
 
+LIBS += -lopengl32
+
 SOURCES += src/main.cpp \
     src/demonstrationwindow.cpp \
     src/newexperimentwindow.cpp \
